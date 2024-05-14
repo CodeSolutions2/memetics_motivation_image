@@ -249,14 +249,15 @@ async function write_message_on_image() {
 
 	let width = Number(image_size.split('x').pop());
 	let height = Number(image_size.split('x').shift());
+	let img_width = 10;
 	if (width == 256) {
-		let img_width = 10;
+		img_width = 10;
 	} else if (width == 512) {
-		let img_width = 15;
+		img_width = 15;
 	} else if (width == 1024) {
-		let img_width = 30;
+		img_width = 30;
 	} else {
-		let img_width = 50;
+		img_width = 50;
 	}
 	
 
