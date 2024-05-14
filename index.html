@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+<h1>OpenAI Generate Image</h1>
+
+<!-- View two split window -->
+<div align="left">
+<table style='text-align: left; width: 300px; display:block'>
+<tr>
+        
+<td>
+<h3>[Step 0] Enter Key</h3>
+<input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:block; text-align: left; width: 150px;">
+<br>
+<h3>[Step 1] Enter a text description to create an image</h3>
+<input id="prompt" type="text" value="" placeholder="prompt" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+<br>
+<h3>[Step 2] Select a model and image size</h3>
+<fieldset>
+<input type="radio" id="dalle2" name="radio_name" value="dalle2" />
+<label for="dalle2">dall-e-2</label>
+<br>
+<input type="radio" id="dalle3" name="radio_name" value="dalle3" />
+<label for="dalle3">dall-e-3</label>
+</fieldset>
+<br>
+<!-- Drop down menu -->
+<!-- 256x256, 512x512, or 1024x1024 for dall-e-2 -->
+<!-- 1024x1024, 1792x1024, or 1024x1792 for dall-e-3 -->
+<label for="image_size">Select a desired image size:</label>
+<select name="image_size_list_dalle2" id="image_size_list_dalle2" style="display:none">
+  <option value="256x256">256x256</option>
+  <option value="512x512">512x512</option>
+  <option value="1024x1024">1024x1024</option>
+</select>
+<select name="image_size_list_dalle3" id="image_size_list_dalle3" style="display:none">
+  <option value="1024x1024">1024x1024</option>
+  <option value="1792x1024">1792x1024</option>
+  <option value="1024x1792">1024x1792</option>
+</select> 
+<br>
+<button id="display_image" onclick="display_image()">display_image</button>
+<br>
+<h3 id="step3_download_button" style="display:none">[Step 3] Download the image</h3>
+<button id="download_button" style="display:none">Download the image</button>
+<br>
+<h3 id="step4_motivational_prompt" style="display:none">[Step 4] Write a motivational prompt on top of image</h3>
+<input id="motivational_prompt" type="text" value="" placeholder="motivational_prompt" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
+<button id="motivational_prompt_button" style="display:none" onclick="write_message_on_image()">Write motivation on image</button>
+<br>
+</td>
+
+<!-- View results -->
+<td id="display_area">
+<div style="width:100%;height:100%;position:absolute;vertical-align:middle;text-align:left;"><canvas id="canvas_img" width="224" height="224" style="display:none"></canvas><div>
+<div id="notification" style="font-family:courier;font-size:15px;"></div>
+<div id="error" style="font-family:courier;font-size:15px;"></div>
+
+</td>
+
+</tr>
+</table>
+</div>  
+	
+<!-- --------------------------------------------------- -->
+
+<style>
+canvas {border: 1px solid black; position: absolute; display: inline-block; z-index: 1; top: 150px;}
+
+div { padding: 10px; display:block; font-family:courier; font-size:15px; height:300px; }
+div#notification { position: relative; color: #3236a8; }
+div#error { position: relative; color: #bd1f17; }
+
+table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
+
+tr {vertical-align: top; border: 0px solid black; padding: 10px 50px; }
+
+th, td {vertical-align: top; border: 0px solid black; padding: 10px; }
+th#pdf_viewer_input {width: 100%; }
+th#pdf_viewer_output {width: 100%; }
+
+button#download_button {background: goldenrod;}
+</style>
+
+
+
+<!-- --------------------------------------------------- -->
+	
+<script>
+
+var model_name = "";
+var image_size = "";
+var url = "";
+	
+// ------------------------------------------
+
+async function processEvent_dalle2(event) {
+    if (this.getAttribute("checked") == false) {
+	document.getElementById("image_size_list_dalle2").style.display = "none";
+      document.getElementById("image_size_list_dalle3").style.display = "none";
+    } else  {
+	document.getElementById("image_size_list_dalle2").style.display = "block";
+  document.getElementById("image_size_list_dalle3").style.display = "none";
+    }    
+}
+
+async function processEvent_dalle3(event) {
+    if (this.getAttribute("checked") == false) {
+      document.getElementById("image_size_list_dalle2").style.display = "none";
+	document.getElementById("image_size_list_dalle3").style.display = "none";
+    } else  {
+	document.getElementById("image_size_list_dalle2").style.display = "none";
+  document.getElementById("image_size_list_dalle3").style.display = "block";
+    }    
+}
+
+document.getElementById("dalle2").addEventListener("click", processEvent_dalle2, false);
+document.getElementById("dalle3").addEventListener("click", processEvent_dalle3, false);
+
+// ------------------------------------------
+
+async function processEvent_download(event) {
+	url = this.getAttribute("data-id");
+	console.log("url in eventlistener: ", url);
+	winRef = window.open(url, "winRef", target="width=1300,height=700");
+}
+	
+// ------------------------------------------
+	
+
+const ctx = document.getElementById("canvas_img").getContext("2d");
+
+
+async function call_API() {
+	var url = 'https://api.openai.com/v1/images/generations';
+	
+	var headers = {"Content-Type": "application/json", 
+		       "Authorization": 'Bearer ' + document.getElementById("OPENAI_API_KEY").value}
+		
+	const dalle2 = document.getElementById("dalle2").checked;
+	const dalle3 = document.getElementById("dalle3").checked;
+	
+	if (dalle2 == true && dalle3 == false) {
+		model_name = 'dall-e-2';
+		image_size = document.getElementById("image_size_list_dalle2").value;
+	}
+	
+	if (dalle2 == false && dalle3 == true) {
+		model_name = 'dall-e-3';
+		image_size = document.getElementById("image_size_list_dalle3").value;
+	}
+	
+	if (dalle2 == false && dalle3 == false) {
+		document.getElementById('error').innerHTML = "Select a model name and image size.";
+	}
+	
+	console.log("model_name: ", model_name);
+	console.log("image_size: ", image_size);
+
+	var out = "";
+	
+	if (model_name.length > 0) {
+		
+		var data = {"model": model_name,
+  		    "prompt": document.getElementById("prompt").value, 
+  		    "n": 1, 
+  		    "size": image_size};
+		
+		var options = {method : 'POST', headers: headers, body : JSON.stringify(data)};
+		
+		out = await fetch(url, options)
+			.then(res => res.json())
+			.then(res => { 
+				let output = JSON.parse(JSON.stringify(res)); 
+				url = output["data"][0]["url"];
+				document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
+				return url;
+			})
+			.catch(error => { document.getElementById('error').innerHTML = error; });
+
+
+		// url = ""
+		// document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
+		// out = url;
+	}
+
+	return out;
+}
+
+	
+// ------------------------------------------
+
+	
+async function display_image(){
+	
+	await new Promise(r => setTimeout(r, 10))
+		.then(async function() {
+			
+			const image = new Image();
+			
+			image.src = await call_API();
+			
+			image.onload = await function () { 
+				// Draw image on canvas
+				document.getElementById("canvas_img").style.display = "block";
+				
+				let width = Number(image_size.split('x').pop());
+				// console.log('width: ', width);
+				document.getElementById("canvas_img").width = width;
+
+				let height = Number(image_size.split('x').shift());
+				// console.log('height: ', height);
+				document.getElementById("canvas_img").height = height;
+					
+				ctx.drawImage(image, 0,0);
+			};
+			
+			// Download image
+			document.getElementById("step3_download_button").style.display = 'block';
+			document.getElementById("download_button").style.display = 'block';
+			console.log("url: ", image.src);
+			document.getElementById("download_button").setAttribute("data-id", image.src);
+			document.getElementById("download_button").addEventListener("click", processEvent_download, false);
+
+			// Write motivational string on image
+			document.getElementById("step4_motivational_prompt").style.display = 'block';
+			document.getElementById("motivational_prompt").style.display = 'block';
+			document.getElementById("motivational_prompt_button").style.display = 'block';
+		})
+		.catch(error => { document.getElementById('error').innerHTML = error; });
+
+
+}
+
+	
+// -------------------------------------------------
+
+
+async function write_message_on_image() {
+
+	let font_height = 48;
+	let padding = 4;
+	ctx.font = font_height.toString()+"px serif";
+	ctx.textAlign = "left";
+	let x = 30;
+	let y = 50
+
+	let width = Number(image_size.split('x').pop());
+	let height = Number(image_size.split('x').shift());
+	if (width == 256) {
+		let img_width = 10;
+	} else if (width == 512) {
+		let img_width = 15;
+	} else if (width == 1024) {
+		let img_width = 30;
+	} else {
+		let img_width = 50;
+	}
+	
+
+	let text = document.getElementById("motivational_prompt").value;
+
+	let words = text.split(" ");
+	let c = 0;
+	let word_list = [];
+	let cut_text = [];
+	words.forEach((word, ind) => {
+		c = c + word.length;
+
+		if (c > img_width){
+			cut_text.push(word_list.join(' '));
+			word_list = [word];
+			c=0;
+		} else {
+			word_list.push(word);
+		}
+	})
+	cut_text.push(word_list.join(' '));
+	console.log('cut_text: ', cut_text);
+	
+	for (let i=0; i<cut_text.length; i++) {
+		
+		ctx.fillText(cut_text[i], x, y);
+
+		y = y + font_height + padding;
+		
+	} 
+  
+
+
+}
+
+
+// -------------------------------------------------
+
+
+
+</script>
+
+</body>
+</html>
