@@ -212,9 +212,9 @@ async function display_image(){
 			
 			const image = new Image();
 			image.src = await call_API();
-			return image.src;
+			return image;
 		})
-		.then(async function(url) { 
+		.then(async function(image) { 
 		
 			image.onload = await function () { 
 				// Draw image on canvas
@@ -230,15 +230,15 @@ async function display_image(){
 					
 				ctx.drawImage(image, 0,0);
 			};
-			return url; 
+			return image; 
 		})
-		.then(async function(url) {
+		.then(async function(image) {
 			// Download image
 			document.getElementById("step3_download_button").style.display = 'block';
 			document.getElementById("download_button").style.display = 'block';
 			
-			console.log("url: ", url);
-			document.getElementById("download_button").setAttribute("data-id", url);
+			console.log("url: ", image.src);
+			document.getElementById("download_button").setAttribute("data-id", image.src);
 			document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 
 			// Write motivational string on image
