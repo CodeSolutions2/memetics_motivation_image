@@ -4,6 +4,12 @@
 <body>
 
 <h1>Meme Motivational Image Generation: powered by OpenAI Dall-e</h1>
+<ol type="A">
+	<li>Display a generated image or your own image via url.</li>
+	<li>Choose to download the displayed image.</li>
+	<li>Write a motivational message (meme) on the displayed image.</li>
+	<li>Save a screenshot of your motivational image!</li>
+</ol>
 
 <!-- View two split window -->
 <div align="left">
@@ -11,13 +17,15 @@
 <tr>
         
 <td>
-<h3>[Step 0] Enter Key</h3>
+<h3 id="enter_key" style="display:block">[A. Generate an image: Step 0] Enter Key</h3>
 <input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:block; text-align: left; width: 150px;">
 <br>
-<h3>[Step 1] Enter a text description to create an image</h3>
+
+<h3>[A. Generate an image: Step 1] Enter a text description to create an image</h3>
 <input id="prompt" type="text" value="" placeholder="prompt" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
 <br>
-<h3>[Step 2] Select a model and image size</h3>
+
+<h3>[A. Generate an image: Step 2] Select a model and image size</h3>
 <fieldset>
 <input type="radio" id="dalle2" name="radio_name" value="dalle2" />
 <label for="dalle2">dall-e-2</label>
@@ -40,13 +48,20 @@
   <option value="1792x1024">1792x1024</option>
   <option value="1024x1792">1024x1792</option>
 </select> 
+
 <br>
-<button id="display_image" onclick="display_image()">display_image</button>
+<h3 id="load_your_url_image" style="display:block">[A. Use your own image: Step 1] Enter the url to your own image</h3>
+<input id="loadurl_image" type="text" value="" placeholder="Url to your image" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+	
 <br>
-<h3 id="step3_download_button" style="display:none">[Step 3] Download the image</h3>
+<button id="display_image" onclick="display_image()">Display the image</button>
+<hr>
+
+<h3 id="download_button_header" style="display:none">[B. Step 1] Download the displayed image</h3>
 <button id="download_button" style="display:none">Download the image</button>
-<br>
-<h3 id="step4_motivational_prompt" style="display:none">[Step 4] Write a motivational prompt on top of image</h3>
+<hr>
+
+<h3 id="motivational_prompt_header" style="display:none">[C. Step 1] Write a motivational message on top of the displayed image</h3>
 <input id="motivational_prompt" type="text" value="" placeholder="motivational_prompt" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
 <label id="motivational_prompt_fontsize_label" style="display:none;">Font size: default (48)</label>
 <input id="motivational_prompt_fontsize" type="text" value="" placeholder="motivational_prompt_fontsize" rows="10" cols="100" style="display:none; text-align: left; width: 300px;">
@@ -175,20 +190,14 @@ async function call_API() {
 				
 				var options = {method : 'POST', headers: headers, body : JSON.stringify(data)};
 				
-				// out = await fetch('https://api.openai.com/v1/images/generations', options)
-				//  	.then(res => res.json())
-				//  	.then(res => { 
-				//  		let output = JSON.parse(JSON.stringify(res)); 
-				//  		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selecte// d."
-				//  		return output["data"][0]["url"];
-				 // 	})
-				//  	.catch(error => { document.getElementById('error').innerHTML = error; });
-		
-				// OR
-
-				// Use your own image
-				out = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-MpmW6OOcWlWnXvFQGjkMPQYq/user-TSIRyCpsFyLvLIf4BlwNRZmW/img-ovoxDQwgmIhAbuR6B20w58yB.png?st=2024-05-15T12%3A23%3A05Z&se=2024-05-15T14%3A23%3A05Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-15T12%3A07%3A51Z&ske=2024-05-16T12%3A07%3A51Z&sks=b&skv=2021-08-06&sig=2UMjlYiKJF9gq/tUBLyJIz1xObp/FKKPACXVmeA1/kU%3D"
-				document.getElementById('notification').innerHTML = "Model "+array[0]+" and image size "+array[1]+" was selected."
+				out = await fetch('https://api.openai.com/v1/images/generations', options)
+				  	.then(res => res.json())
+				  	.then(res => { 
+				  		let output = JSON.parse(JSON.stringify(res)); 
+				  		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selecte// d."
+				  		return output["data"][0]["url"];
+				  	})
+				  	.catch(error => { document.getElementById('error').innerHTML = error; });
 			}
 
 		// console.log('out: ', out);
@@ -208,21 +217,28 @@ async function display_image(){
 		.then(async function() {
 			
 			const image = new Image();
-			image.src = await call_API();
+
+			if (document.getElementById("loadurl_image").value.length == 0){
+				// Generate image if [use your own image] field is blank
+				image.src = await call_API();
+			} else {
+				image.src = document.getElementById("loadurl_image").value;
+			}
 			return image;
 		})
 		.then(async function(image) { 
-		
+
+			// A. Display image on canvas
 			image.onload = await function () { 
 				// Draw image on canvas
 				document.getElementById("canvas_img").style.display = "block";
 				
 				let width = Number(image_size.split('x').pop());
-				console.log('width: ', width);
+				// console.log('width: ', width);
 				document.getElementById("canvas_img").width = width;
 
 				let height = Number(image_size.split('x').shift());
-				console.log('height: ', height);
+				// console.log('height: ', height);
 				document.getElementById("canvas_img").height = height;
 					
 				ctx.drawImage(image, 0,0);
@@ -230,31 +246,30 @@ async function display_image(){
 			return image; 
 		})
 		.then(async function(image) {
-			// Download image
-			document.getElementById("step3_download_button").style.display = 'block';
+
+			// Make B appear: 
+			document.getElementById("download_button_header").style.display = 'block';
 			document.getElementById("download_button").style.display = 'block';
 			
-			console.log("image.src: ", image.src);
-			document.getElementById("download_button").setAttribute("data-id", image.src);
-			document.getElementById("download_button").addEventListener("click", processEvent_download, false);
-
-			// Write motivational string on image
-			document.getElementById("step4_motivational_prompt").style.display = 'block';
+			// Make C appear: write motivational string on image
+			document.getElementById("motivational_prompt_header").style.display = 'block';
 			document.getElementById("motivational_prompt").style.display = 'block';
-			
 			document.getElementById("motivational_prompt_fontsize_label").style.display = 'block';
 			document.getElementById("motivational_prompt_fontsize").style.display = 'block';
 			document.getElementById("motivational_prompt_fontcolor_label").style.display = 'block';
 			document.getElementById("motivational_prompt_fontcolor").style.display = 'block';
-      
 			document.getElementById("motivational_prompt_button").style.display = 'block';
+			
+			// B. Give generated url to new window
+			console.log("image.src: ", image.src);
+			document.getElementById("download_button").setAttribute("data-id", image.src);
+			document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 		})
 		.catch(error => { document.getElementById('error').innerHTML = error; });
 
-
 }
 
-	
+
 // -------------------------------------------------
 
 
@@ -288,7 +303,7 @@ async function write_message_on_image() {
 	let RGB_check_if_all_chars_are_numbers = RGB_remove_all_spaces.match(/^\d+$/); // Array [ "255255255" ]
 	console.log("RGB_check_if_all_chars_are_numbers: ", RGB_check_if_all_chars_are_numbers);
 
-	let RGB_remove_consecutive_spaces = RGB.replace(/\s{2,}/g, "");
+	let RGB_remove_consecutive_spaces = RGB.replace(/\s+/g, " ");
 	console.log("RGB remove consecutive spaces: ", RGB_remove_consecutive_spaces);
 
 	let RGB_nospace = [];
@@ -351,8 +366,6 @@ async function write_message_on_image() {
 		
 	} 
   
-
-
 }
 
 
