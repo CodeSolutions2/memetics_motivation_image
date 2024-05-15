@@ -372,7 +372,7 @@ async function write_message_on_image() {
 		ctx.fillStyle = "rgb("+RGB_nospace[0]+" "+RGB_nospace[1]+" "+RGB_nospace[2]+")";
 		ctx.fillText(cut_text[i], x, y);
 		
-		y = y + font_height + padding;
+		y = y + Number(font_height) + padding;
 		console.log('y: ', y);
 	} 
   
