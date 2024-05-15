@@ -55,11 +55,11 @@
 	
 <br>
 <button id="display_image" onclick="display_image()">Display the image</button>
-<hr>
+<hr id="line_0" style="display:block;>
 
 <h3 id="download_button_header" style="display:none">[B. Step 1] Download the displayed image</h3>
 <button id="download_button" style="display:none">Download the image</button>
-<hr>
+<hr id="line_1" style="display:block;>
 
 <h3 id="motivational_prompt_header" style="display:none">[C. Step 1] Write a motivational message on top of the displayed image</h3>
 <input id="motivational_prompt" type="text" value="" placeholder="motivational_prompt" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
@@ -194,7 +194,7 @@ async function call_API() {
 				  	.then(res => res.json())
 				  	.then(res => { 
 				  		let output = JSON.parse(JSON.stringify(res)); 
-				  		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selecte// d."
+				  		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
 				  		return output["data"][0]["url"];
 				  	})
 				  	.catch(error => { document.getElementById('error').innerHTML = error; });
@@ -248,10 +248,12 @@ async function display_image(){
 		.then(async function(image) {
 
 			// Make B appear: 
+			document.getElementById("line_0").style.display = 'block';
 			document.getElementById("download_button_header").style.display = 'block';
 			document.getElementById("download_button").style.display = 'block';
 			
 			// Make C appear: write motivational string on image
+			document.getElementById("line_1").style.display = 'block';
 			document.getElementById("motivational_prompt_header").style.display = 'block';
 			document.getElementById("motivational_prompt").style.display = 'block';
 			document.getElementById("motivational_prompt_fontsize_label").style.display = 'block';
@@ -358,12 +360,10 @@ async function write_message_on_image() {
 	console.log('cut_text: ', cut_text);
 	
 	for (let i=0; i<cut_text.length; i++) {
-		
 		ctx.fillText(cut_text[i], x, y);
-    ctx.fillStyle = "rgb("+RGB_nospace.join(" ")+" / 100%)";
+		ctx.fillStyle = `rgb(${RGB_nospace[0]} ${RGB_nospace[1]} ${RGB_nospace[2]})`;
 
 		y = y + font_height + padding;
-		
 	} 
   
 }
