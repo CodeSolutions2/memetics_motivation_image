@@ -63,7 +63,7 @@
 <input id="motivational_prompt" type="text" value="" placeholder="motivational_prompt" rows="10" cols="100" style="display:none; text-align: left; width: 600px;">
 <label id="motivational_prompt_fontsize_label" style="display:none;">Font size: default (48)</label>
 <input id="motivational_prompt_fontsize" type="text" value="" placeholder="motivational_prompt_fontsize" rows="10" cols="100" style="display:none; text-align: left; width: 300px;">
-<label id="motivational_prompt_fontcolor_label" style="display:none;">Font color in RGB: default (black=0 0 0)</label>
+<label id="motivational_prompt_fontcolor_label" style="display:none;">Font color in RGB: default (black) = 0 0 0</label>
 <input id="motivational_prompt_fontcolor" type="text" value="" placeholder="motivational_prompt_fontcolor" rows="10" cols="100" style="display:none; text-align: left; width: 300px;">
 <button id="motivational_prompt_button" style="display:none" onclick="write_message_on_image()">Write motivation on image</button>
 <button id="remove_message_on_image_button" style="display:none" onclick="remove_message_on_image()">Remove text on image</button>
@@ -329,8 +329,7 @@ async function write_message_on_image() {
 	let padding = 4;
 	ctx.font = font_height.toString()+"px serif";
 	ctx.textAlign = "left";
-	let x = 30;
-	let y = 50
+	
 
 	let width = Number(image_size.split('x').pop());
 	let height = Number(image_size.split('x').shift());
@@ -365,12 +364,16 @@ async function write_message_on_image() {
 	})
 	cut_text.push(word_list.join(' '));
 	console.log('cut_text: ', cut_text);
-	
+
+
+	let x = 30;
+	let y = 50
 	for (let i=0; i<cut_text.length; i++) {
 		ctx.fillStyle = "rgb("+RGB_nospace[0]+" "+RGB_nospace[1]+" "+RGB_nospace[2]+")";
 		ctx.fillText(cut_text[i], x, y);
 		
 		y = y + font_height + padding;
+		console.log('y: ', y);
 	} 
   
 }
