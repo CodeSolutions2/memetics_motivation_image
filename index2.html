@@ -138,59 +138,67 @@ const ctx = document.getElementById("canvas_img").getContext("2d");
 
 
 async function call_API() {
-	var url = 'https://api.openai.com/v1/images/generations';
-	
-	var headers = {"Content-Type": "application/json", 
-		       "Authorization": 'Bearer ' + document.getElementById("OPENAI_API_KEY").value}
-		
-	const dalle2 = document.getElementById("dalle2").checked;
-	const dalle3 = document.getElementById("dalle3").checked;
-	
-	if (dalle2 == true && dalle3 == false) {
-		model_name = 'dall-e-2';
-		image_size = document.getElementById("image_size_list_dalle2").value;
-	}
-	
-	if (dalle2 == false && dalle3 == true) {
-		model_name = 'dall-e-3';
-		image_size = document.getElementById("image_size_list_dalle3").value;
-	}
-	
-	if (dalle2 == false && dalle3 == false) {
-		document.getElementById('error').innerHTML = "Select a model name and image size.";
-	}
-	
-	console.log("model_name: ", model_name);
-	console.log("image_size: ", image_size);
 
-	var out = "";
+	return await new Promise(r => setTimeout(r, 10))
+		.then(async function() {
+		
+			const dalle2 = document.getElementById("dalle2").checked;
+			const dalle3 = document.getElementById("dalle3").checked;
 	
-	if (model_name.length > 0) {
-		
-		var data = {"model": model_name,
-  		    "prompt": document.getElementById("prompt").value, 
-  		    "n": 1, 
-  		    "size": image_size};
-		
-		var options = {method : 'POST', headers: headers, body : JSON.stringify(data)};
-		
-		// out = await fetch(url, options)
-		// 	.then(res => res.json())
-		// 	.then(res => { 
-		// 		let output = JSON.parse(JSON.stringify(res)); 
-		// 		url = output["data"][0]["url"];
-		// 		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
-		// 		return url;
-		// 	})
-		// 	.catch(error => { document.getElementById('error').innerHTML = error; });
+			if (dalle2 == true && dalle3 == false) {
+				model_name = 'dall-e-2';
+				image_size = document.getElementById("image_size_list_dalle2").value;
+			}
+			
+			if (dalle2 == false && dalle3 == true) {
+				model_name = 'dall-e-3';
+				image_size = document.getElementById("image_size_list_dalle3").value;
+			}
+			
+			if (dalle2 == false && dalle3 == false) {
+				document.getElementById('error').innerHTML = "Select a model name and image size.";
+			}
+			
+			console.log("model_name: ", model_name);
+			console.log("image_size: ", image_size);
+			return [model_name, image_size];
+		})
+		.then(async function(array) {
+			var out = "";
+			
+			if (array[0].length > 0) {
 
+				var headers = {"Content-Type": "application/json", 
+						       "Authorization": 'Bearer ' + document.getElementById("OPENAI_API_KEY").value}
+				
+				var data = {"model": array[0],
+		  		    "prompt": document.getElementById("prompt").value, 
+		  		    "n": 1, 
+		  		    "size": array[1]};
+				
+				var options = {method : 'POST', headers: headers, body : JSON.stringify(data)};
+				
+				// out = await fetch('https://api.openai.com/v1/images/generations', options)
+				// 	.then(res => res.json())
+				// 	.then(res => { 
+				// 		let output = JSON.parse(JSON.stringify(res)); 
+				// 		url = output["data"][0]["url"];
+				// 		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
+				// 		return url;
+				// 	})
+				// 	.catch(error => { document.getElementById('error').innerHTML = error; });
+		
+		
+				url = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-MpmW6OOcWlWnXvFQGjkMPQYq/user-TSIRyCpsFyLvLIf4BlwNRZmW/img-RcTNzYjGXyoIdEQBiuD1soPu.png?st=2024-05-15T10%3A59%3A32Z&se=2024-05-15T12%3A59%3A32Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-14T15%3A07%3A59Z&ske=2024-05-15T15%3A07%3A59Z&sks=b&skv=2021-08-06&sig=0ZQDqhLjus4FuPkMoQBhHXH1VyNHQ0soavMfcnvroWA%3D"
+				document.getElementById('notification').innerHTML = "Model "+array[0]+" and image size "+array[1]+" was selected."
+				out = url;
+			}
 
-		url = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-MpmW6OOcWlWnXvFQGjkMPQYq/user-TSIRyCpsFyLvLIf4BlwNRZmW/img-RcTNzYjGXyoIdEQBiuD1soPu.png?st=2024-05-15T10%3A59%3A32Z&se=2024-05-15T12%3A59%3A32Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-14T15%3A07%3A59Z&ske=2024-05-15T15%3A07%3A59Z&sks=b&skv=2021-08-06&sig=0ZQDqhLjus4FuPkMoQBhHXH1VyNHQ0soavMfcnvroWA%3D"
-		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
-		out = url;
-	}
-
-	return out;
+		console.log('out: ', out);
+		return out;
+		})
+		.catch(error => { document.getElementById('error').innerHTML = error; });
+	
 }
 
 	
