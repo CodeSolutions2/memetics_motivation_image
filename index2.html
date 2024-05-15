@@ -110,6 +110,7 @@ button#download_button {background: goldenrod;}
 
 var model_name = "";
 var image_size = "";
+var image = {};
 	
 // ------------------------------------------
 
@@ -216,12 +217,8 @@ async function display_image(){
 	await new Promise(r => setTimeout(r, 10))
 		.then(async function() {
 			
-			const image = new Image();
-
-			console.log('document.getElementById(loadurl_image).value: ', document.getElementById("loadurl_image").value);
-			console.log('document.getElementById(loadurl_image).value.length: ', document.getElementById("loadurl_image").value.length);
-			
-			
+			image = new Image();
+	
 			if (document.getElementById("loadurl_image").value.length == 0){
 				// Generate image if [use your own image] field is blank
 				image.src = await call_API();
@@ -229,7 +226,7 @@ async function display_image(){
 				image.src = document.getElementById("loadurl_image").value;
 				image_size = document.getElementById("image_size_list_dalle2").value;
 			}
-			console.log("image.src: ", image.src);
+			
 			return image;
 		})
 		.then(async function(image) { 
@@ -383,7 +380,7 @@ async function write_message_on_image() {
 
 
 async function remove_message_on_image(){
-	ctx.fillText("", 30, 50);
+	ctx.drawImage(image, 0,0);
 }
 
 // -------------------------------------------------
