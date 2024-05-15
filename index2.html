@@ -226,6 +226,7 @@ async function display_image(){
 				image.src = await call_API();
 			} else {
 				image.src = document.getElementById("loadurl_image").value;
+				image_size = document.getElementById("image_size_list_dalle2").value;
 			}
 			console.log("image.src: ", image.src);
 			return image;
