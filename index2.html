@@ -262,6 +262,8 @@ async function write_message_on_image() {
 	
 	let fontsize = document.getElementById("motivational_prompt_fontsize").value;
 	console.log("fontsize: ", fontsize);
+	console.log("fontsize.length: ", fontsize.length);
+	console.log("typeof fontsize: ", typeof fontsize);
 	
 	let font_height = 48;
 	if (fontsize.length > 0 && typeof fontsize == "number") {
@@ -276,7 +278,10 @@ async function write_message_on_image() {
 	
 	let RGB_nospace = [];
 
+	console.log("RGB.length: ", RGB.length);
 	console.log("RGB no spaces: ", RGB.replace(/[\s]/g, ""));
+	console.log("RGB no spaces typeof: ", typeof RGB.replace(/[\s]/g, ""));
+	console.log("RGB single space: ", RGB.replace(/\s\1{2,}'/g, ""));
 	
 	if (RGB.length > 0 && typeof RGB.replace(/[\s]/g, "") == "number") {
 		RGB = RGB.split(' ');
