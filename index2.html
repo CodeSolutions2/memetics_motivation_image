@@ -34,6 +34,9 @@
 <label for="dalle3">dall-e-3</label>
 </fieldset>
 <br>
+<h3 id="load_your_url_image" style="display:block">[A. Use your own image and select the image size: Step 1] Enter the url to your own image</h3>
+<input id="loadurl_image" type="text" value="" placeholder="Url to your image" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
+<br>
 <!-- Drop down menu -->
 <!-- 256x256, 512x512, or 1024x1024 for dall-e-2 -->
 <!-- 1024x1024, 1792x1024, or 1024x1792 for dall-e-3 -->
@@ -48,11 +51,6 @@
   <option value="1792x1024">1792x1024</option>
   <option value="1024x1792">1024x1792</option>
 </select> 
-
-<br>
-<h3 id="load_your_url_image" style="display:block">[A. Use your own image: Step 1] Enter the url to your own image</h3>
-<input id="loadurl_image" type="text" value="" placeholder="Url to your image" rows="10" cols="100" style="display:block; text-align: left; width: 600px;">
-	
 <br>
 <button id="display_image" onclick="display_image()">Display the image</button>
 <hr id="line_0" style="display:block;>
@@ -136,6 +134,7 @@ async function processEvent_dalle3(event) {
 
 document.getElementById("dalle2").addEventListener("click", processEvent_dalle2, false);
 document.getElementById("dalle3").addEventListener("click", processEvent_dalle3, false);
+document.getElementById("loadurl_image").addEventListener("click", processEvent_dalle2, false);
 
 // ------------------------------------------
 
@@ -218,18 +217,24 @@ async function display_image(){
 			
 			const image = new Image();
 
+			console.log('document.getElementById(loadurl_image).value: ', document.getElementById("loadurl_image").value);
+			console.log('document.getElementById(loadurl_image).value.length: ', document.getElementById("loadurl_image").value.length);
+			
+			
 			if (document.getElementById("loadurl_image").value.length == 0){
 				// Generate image if [use your own image] field is blank
 				image.src = await call_API();
 			} else {
 				image.src = document.getElementById("loadurl_image").value;
 			}
+			console.log("image.src: ", image.src);
 			return image;
 		})
 		.then(async function(image) { 
 
 			// A. Display image on canvas
 			image.onload = await function () { 
+				
 				// Draw image on canvas
 				document.getElementById("canvas_img").style.display = "block";
 				
