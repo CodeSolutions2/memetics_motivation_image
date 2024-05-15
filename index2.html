@@ -293,8 +293,10 @@ async function write_message_on_image() {
 	console.log("check_if_all_chars_are_numbers: ", check_if_all_chars_are_numbers);
 	
 	let font_height = 48;
-	if (fontsize.length == check_if_all_chars_are_numbers[0].length) {
-		font_height = fontsize;
+	if (check_if_all_chars_are_numbers != null) {
+		if (fontsize.length == check_if_all_chars_are_numbers[0].length) {
+			font_height = fontsize;
+		}
 	}
 	console.log("font_height: ", font_height);
 
@@ -314,12 +316,12 @@ async function write_message_on_image() {
 	let RGB_remove_consecutive_spaces = RGB.replace(/\s+/g, " ");
 	console.log("RGB remove consecutive spaces: ", RGB_remove_consecutive_spaces);
 
-	let RGB_nospace = [];
-	if (RGB_remove_all_spaces.length == RGB_check_if_all_chars_are_numbers[0].length) {
-		RGB_remove_consecutive_spaces_strarr = RGB_remove_consecutive_spaces.split(' ');
-		RGB_nospace = RGB_remove_consecutive_spaces_strarr.map((val) => {return Number(val)});
-	} else {
-		RGB_nospace = [0, 0, 0];
+	let RGB_nospace = [0, 0, 0];
+	if (RGB_check_if_all_chars_are_numbers != null) {
+		if (RGB_remove_all_spaces.length == RGB_check_if_all_chars_are_numbers[0].length) {
+			RGB_remove_consecutive_spaces_strarr = RGB_remove_consecutive_spaces.split(' ');
+			RGB_nospace = RGB_remove_consecutive_spaces_strarr.map((val) => {return Number(val)});
+		}
 	}
 	console.log("RGB_nospace: ", RGB_nospace);
 
