@@ -66,6 +66,7 @@
 <label id="motivational_prompt_fontcolor_label" style="display:none;">Font color in RGB: default (black=0 0 0)</label>
 <input id="motivational_prompt_fontcolor" type="text" value="" placeholder="motivational_prompt_fontcolor" rows="10" cols="100" style="display:none; text-align: left; width: 300px;">
 <button id="motivational_prompt_button" style="display:none" onclick="write_message_on_image()">Write motivation on image</button>
+<button id="remove_message_on_image_button" style="display:none" onclick="remove_message_on_image()">Remove text on image</button>
 <br>
 </td>
 
@@ -267,6 +268,7 @@ async function display_image(){
 			document.getElementById("motivational_prompt_fontcolor_label").style.display = 'block';
 			document.getElementById("motivational_prompt_fontcolor").style.display = 'block';
 			document.getElementById("motivational_prompt_button").style.display = 'block';
+			document.getElementById("remove_message_on_image_button").style.display = 'block';
 			
 			// B. Give generated url to new window
 			console.log("image.src: ", image.src);
@@ -370,13 +372,19 @@ async function write_message_on_image() {
 	for (let i=0; i<cut_text.length; i++) {
 		ctx.fillStyle = "rgb("+RGB_nospace[0]+" "+RGB_nospace[1]+" "+RGB_nospace[2]+")";
 		ctx.fillText(cut_text[i], x, y);
-		//ctx.fillStyle = `rgb(${} ${} ${})`;
 		
 		y = y + font_height + padding;
 	} 
   
 }
 
+
+// -------------------------------------------------
+
+
+async function remove_message_on_image(){
+	ctx.fillText("", 30, 50);
+}
 
 // -------------------------------------------------
 
