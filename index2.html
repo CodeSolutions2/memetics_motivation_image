@@ -96,7 +96,6 @@ button#download_button {background: goldenrod;}
 
 var model_name = "";
 var image_size = "";
-var url = "";
 	
 // ------------------------------------------
 
@@ -126,9 +125,7 @@ document.getElementById("dalle3").addEventListener("click", processEvent_dalle3,
 // ------------------------------------------
 
 async function processEvent_download(event) {
-	url = this.getAttribute("data-id");
-	console.log("url in eventlistener: ", url);
-	winRef = window.open(url, "winRef", target="width=1300,height=700");
+	winRef = window.open(this.getAttribute("data-id"), "winRef", target="width=1300,height=700");
 }
 	
 // ------------------------------------------
@@ -164,7 +161,7 @@ async function call_API() {
 			return [model_name, image_size];
 		})
 		.then(async function(array) {
-			let out = "";
+			var out = "";
 			
 			if (array[0].length > 0) {
 
@@ -182,16 +179,14 @@ async function call_API() {
 				// 	.then(res => res.json())
 				// 	.then(res => { 
 				// 		let output = JSON.parse(JSON.stringify(res)); 
-				// 		url = output["data"][0]["url"];
 				// 		document.getElementById('notification').innerHTML = "Model "+model_name+" and image size "+image_size+" was selected."
-				// 		return url;
+				// 		return output["data"][0]["url"];
 				// 	})
 				// 	.catch(error => { document.getElementById('error').innerHTML = error; });
 		
 		
-				url = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-MpmW6OOcWlWnXvFQGjkMPQYq/user-TSIRyCpsFyLvLIf4BlwNRZmW/img-RcTNzYjGXyoIdEQBiuD1soPu.png?st=2024-05-15T10%3A59%3A32Z&se=2024-05-15T12%3A59%3A32Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-14T15%3A07%3A59Z&ske=2024-05-15T15%3A07%3A59Z&sks=b&skv=2021-08-06&sig=0ZQDqhLjus4FuPkMoQBhHXH1VyNHQ0soavMfcnvroWA%3D"
+				out = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-MpmW6OOcWlWnXvFQGjkMPQYq/user-TSIRyCpsFyLvLIf4BlwNRZmW/img-RcTNzYjGXyoIdEQBiuD1soPu.png?st=2024-05-15T10%3A59%3A32Z&se=2024-05-15T12%3A59%3A32Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-05-14T15%3A07%3A59Z&ske=2024-05-15T15%3A07%3A59Z&sks=b&skv=2021-08-06&sig=0ZQDqhLjus4FuPkMoQBhHXH1VyNHQ0soavMfcnvroWA%3D"
 				document.getElementById('notification').innerHTML = "Model "+array[0]+" and image size "+array[1]+" was selected."
-				out = url;
 			}
 
 		// console.log('out: ', out);
@@ -237,7 +232,7 @@ async function display_image(){
 			document.getElementById("step3_download_button").style.display = 'block';
 			document.getElementById("download_button").style.display = 'block';
 			
-			console.log("url: ", image.src);
+			console.log("image.src: ", image.src);
 			document.getElementById("download_button").setAttribute("data-id", image.src);
 			document.getElementById("download_button").addEventListener("click", processEvent_download, false);
 
