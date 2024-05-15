@@ -367,7 +367,8 @@ async function write_message_on_image() {
 	
 	for (let i=0; i<cut_text.length; i++) {
 		ctx.fillText(cut_text[i], x, y);
-		ctx.fillStyle = `rgb(${RGB_nospace[0]} ${RGB_nospace[1]} ${RGB_nospace[2]})`;
+		//ctx.fillStyle = `rgb(${RGB_nospace[0]} ${RGB_nospace[1]} ${RGB_nospace[2]})`;
+		ctx.fillStyle = "rgb(255 255 255)";
 
 		y = y + font_height + padding;
 	} 
