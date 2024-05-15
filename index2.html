@@ -194,7 +194,7 @@ async function call_API() {
 				out = url;
 			}
 
-		console.log('out: ', out);
+		// console.log('out: ', out);
 		return out;
 		})
 		.catch(error => { document.getElementById('error').innerHTML = error; });
@@ -266,6 +266,7 @@ async function write_message_on_image() {
 	// ------------------------------
 	
 	let fontsize = document.getElementById("motivational_prompt_fontsize").value;
+	console.log("fontsize: ", fontsize);
 	
 	let font_height = 48;
 	if (fontsize.length > 0 && typeof fontsize == "number") {
@@ -276,7 +277,8 @@ async function write_message_on_image() {
 	// ------------------------------
 	
 	let RGB = document.getElementById("motivational_prompt_fontcolor").value;
-
+	console.log("RGB: ", RGB);
+	
 	let RGB_nospace = [];
 
 	console.log("RGB no spaces: ", RGB.replace(/[\s]/g, ""));
