@@ -352,11 +352,15 @@ async function write_message_on_image() {
 
 	// ------------------------------
 
+	var text = document.getElementById("motivational_prompt").value;
+
+	// ------------------------------
+	
 	// Separate text into an array for printing line-by-line
 	let c = 0;
 	let word_list = [];
 	let cut_text = [];
-	generated_text.split(" ").map((word, ind) => {
+	text.split(" ").map((word, ind) => {
 		c = c + (word.length + 1); // plus for the space
 
 		if (c > max_num_of_char_per_line){
