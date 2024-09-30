@@ -8,7 +8,7 @@ There are two versions of meme motivation, a manual and auatomtic version.
 
 
 ## Manual Meme Motivation 
-[Try Manual Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index2.html
+[Try Manual Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index3.html
 
 Manual Meme Motivation Examples:
 
@@ -18,4 +18,4 @@ Manual Meme Motivation Examples:
 
 
 ## Automatic Meme Motivation 
-*In progress*
+[Best working version] https://codesolutions2.github.io/meme_motivation_image/automatic_index.html
