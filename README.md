@@ -18,4 +18,4 @@ Manual Meme Motivation Examples:
 
 
 ## Automatic Meme Motivation 
-[Best working version] https://codesolutions2.github.io/meme_motivation_image/automatic_index.html
+*in progress*
