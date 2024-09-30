@@ -343,7 +343,7 @@ async function write_message_on_image() {
 	
 	// need to measure the max number of [font characters] that can be written on one line
 	// Character Width = Font Size * Character Aspect Ratio = 30 * 0.5 = 15pt
-	var char_width = (font_height + 1)*aspect_ratio;
+	var char_width = font_height*aspect_ratio;
 	console.log("char_width: ", char_width);
 	
 	var max_num_of_char_per_line = Math.floor(width/char_width);
