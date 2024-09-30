@@ -350,6 +350,10 @@ async function write_message_on_image() {
 
 	var text = document.getElementById("motivational_prompt").value;
 
+	// Replace hypens with spaces
+	text = text.replace(/-/g, " ");
+	console.log("text: ", text);
+
 	// ------------------------------
 	
 	// Separate text into an array for printing line-by-line
