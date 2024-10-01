@@ -53,7 +53,9 @@
 <button id="run_selection" onclick="run_selection()">[2] Display the image</button>
 <hr id="line_0" style="display:none;">
 
-<br>
+<br><br>
+
+<progress id="progress_bar" max="100" value="0" style="display:none">0%</progress>
 </td>
 
 <!-- View results -->
@@ -160,51 +162,76 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 
 async function run_selection() {
 
+	document.getElementById("progress_bar").style.display = "block";
+	
 	var dropdown_option_type = document.getElementById("dropdown_options").value;
-
+	
 	// Get randomly selected image and text prompts
 	const [motivational_image_prompt, motivational_text_prompt] = await select_motivation_topic();
 	console.log("motivational_image_prompt: ", motivational_image_prompt);
 	console.log("motivational_text_prompt: ", motivational_text_prompt);
 
+	document.getElementById("progress_bar").value = (1/6)*100;
 	
 	if (dropdown_option_type == 'dalle2') {
 		const model_name = 'dall-e-2';
 		const image_size = document.getElementById("image_size_list_dalle2").value;
-
+		
 		await assign_width_height(image_size);
+
+		document.getElementById("progress_bar").value = (2/6)*100;
 		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
 
+		document.getElementById("progress_bar").value = (3/6)*100;
+		
 		// Generate automated message for the image
 		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt);
 		console.log("generated_text: ", generated_text);
 
+		document.getElementById("progress_bar").value = (4/6)*100;
+		
 		const generated_text_array = await preprocess_text(generated_text);
 
+		document.getElementById("progress_bar").value = (5/6)*100;
+		
 		// Display image
 		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
-	    
+
+		document.getElementById("progress_bar").value = (6/6)*100;
+
+		document.getElementById("progress_bar").style.display = "block";
 		
 	} else if (dropdown_option_type == 'dalle3') {
 		const model_name = 'dall-e-3';
 		const image_size = document.getElementById("image_size_list_dalle3").value;
 
 		await assign_width_height(image_size);
+
+		document.getElementById("progress_bar").value = (2/6)*100;
 		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
+
+		document.getElementById("progress_bar").value = (3/6)*100;
 		
 		// Generate automated message for the image
 		const generated_text = await create_text_call_API_OpenAI(motivational_text_prompt);
 		console.log("generated_text: ", generated_text);
 
+		document.getElementById("progress_bar").value = (4/6)*100;
+		
 		const generated_text_array = await preprocess_text(generated_text);
+
+		document.getElementById("progress_bar").value = (5/6)*100;
 
 		// Display image
 		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
-	    
+
+		document.getElementById("progress_bar").value = (6/6)*100;
+
+		document.getElementById("progress_bar").style.display = "block";
 
 	} else if (dropdown_option_type == 'custom_model') {
 		document.getElementById('notification').innerHTML = "In progress.";
