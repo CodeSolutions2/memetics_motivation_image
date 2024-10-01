@@ -6,10 +6,9 @@
 
 "A field of study called memetics arose in the 1990s to explore the concepts and transmission of memes in terms of an evolutionary model. All evolutionary processes depend on information being copied, varied, and selected, a process also known as variation with selective retention. The conveyor of the information being copied is known as the replicator, with the gene functioning as the replicator in biological evolution. Dawkins proposed that the same process drives cultural evolution, and he called this second replicator the "meme," citing examples such as musical tunes, catchphrases, fashions, and technologies." [https://en.wikipedia.org/wiki/Memetics].
 
-
-Hopefully this webapp will motivate others to have a productive and happy life, using motivational Internet meme content. There are two versions of meme motivation, a manual and auatomtic version. 
+Hopefully this webapp will motivate others to have a productive and happy life, using motivational Internet meme content. There are two versions of meme motivation, a manual and automatic version. 
 1. Using the manual version, one can use their own motivational image or generate an image, and then they can write their own motivational messsage on the image.
-2. Using the automatic version, one simply pushs the button and a motivational image and text are created using prompts on the topics of [health, education, life-balance, happiness, success]. One of the five topics are randomly choosen and both an image and text are generated to create a unique motivational image based on chance for each user.
+2. Using the automatic version, one simply pushs the button and a motivational image and text are created using prompts on the topics of [health, education, life-balance, happiness, success, effective communication]. One of the five topics are randomly choosen and both an image and text are generated to create a unique motivational image based on chance for each user.
 
 
 ## Manual Meme Motivation 
