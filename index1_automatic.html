@@ -110,8 +110,9 @@ var ctx = document.getElementById("canvas_img").getContext("2d");
 var font_height = 40;
 var width;
 var height;
+const padding = 4;
 
-	
+
 // ------------------------------------------
 // UI
 // ------------------------------------------  
@@ -299,7 +300,6 @@ async function display_image(generated_text_array, image_url){
 		
 		const x = 30;
 		var y = 50;
-		const padding = 4;
 	
 		ctx.font = "bold "+font_height.toString()+"px serif";
 		ctx.textAlign = "left";
@@ -375,8 +375,9 @@ async function preprocess_text(generated_text) {
 	var c = 0;
 	var word_list = [];
 	var cut_text = [];
+	
 	generated_text.split(" ").map((word, ind) => {
-		c = c + (word.length + 1); // plus for the space
+		c = c + (word.length + 1 + padding); // plus for the space
 
 		if (c > max_num_of_char_per_line){
 			cut_text.push(word_list.join(' '));
