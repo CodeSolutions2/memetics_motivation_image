@@ -182,6 +182,7 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (2/6)*100;
 		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
+		console.log("image_url: ", image_url);
 
 		document.getElementById("progress_bar").value = (3/6)*100;
 		
@@ -212,6 +213,7 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (2/6)*100;
 		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, motivational_image_prompt);
+		console.log("image_url: ", image_url);
 
 		document.getElementById("progress_bar").value = (3/6)*100;
 		
@@ -226,7 +228,7 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (5/6)*100;
 
 		// Display image
-		const imageData = await display_image(generated_text_array, image_url);
+		const imageData = await display_image(_array, image_url);
 		console.log('imageData: ', imageData);
 
 		document.getElementById("progress_bar").value = (6/6)*100;
@@ -340,8 +342,6 @@ async function display_image(generated_text_array, image_url){
 		// ------------------------------
 		
 	}
-
-	
 	
 	return ctx.getImageData(0, 0, width, height);
 }
@@ -370,7 +370,6 @@ async function create_text_call_API_OpenAI(motivational_text_prompt) {
 	
 	// Replace double hypens with [dot space]
 	generated_text = await generated_text.replace(/—/g, ". ");
-	console.log("generated_text: ", generated_text);
 
 	return generated_text;
 }
