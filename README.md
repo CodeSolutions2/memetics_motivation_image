@@ -24,4 +24,4 @@ Manual Meme Motivation Examples:
 
 
 ## Automatic Meme Motivation 
-[Try Automatic Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index_automatic.html
+[Try Automatic Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index1_automatic.html
