@@ -343,7 +343,7 @@ async function display_image(generated_text_array, image_url){
 		
 	}
 	
-	return ctx.getImageData(0, 0, width, height);
+	return await ctx.getImageData(0, 0, width, height);
 }
 	
 // ------------------------------------------
