@@ -22,7 +22,7 @@
   <option value="---">Select an option</option>
   <option value="openai_dalle2">OpenAI dall-e-2</option>
   <option value="openai_dalle3">OpenAI dall-e-3</option>
-  <option value="google_imagen">Google dall-e-3</option>
+  <option value="google_imagen">Google imagen</option>
   <option value="free_image_from_database">Free image from database</option>
 </select>
 
@@ -257,7 +257,7 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (3/6)*100;
 		
 		// Randomize which image to obtain
-		const selection = Math.floor(Math.random()*file_array.length);
+		const selection = Math.round(Math.random()*file_array.length);
 		console.log("selection: ", selection);
 
 		document.getElementById("progress_bar").value = (4/6)*100;
@@ -266,7 +266,8 @@ async function run_selection() {
 		console.log("selected_image: ", selected_image);
 
 		// Obtain image size, and set canvas size
-		const image_size = selected_image.split('_').at(1);
+		const selected_image_arr = selected_image.split('_');
+		const image_size = selected_image_arr.at(1);
 		await assign_width_height(image_size);
 
 		document.getElementById("progress_bar").value = (5/6)*100;
@@ -280,7 +281,7 @@ async function run_selection() {
 
 		document.getElementById("progress_bar").value = (6/6)*100;
 
-		document.getElementById('notification').innerHTML = ""
+		document.getElementById('notification').innerHTML = "";
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
@@ -331,7 +332,7 @@ async function create_image_call_API_OpenAI(model_name, image_size, motivational
 async function select_motivation_topic() {
 	
 	// Generate one random number from [0 to motivation_topics.length]
-	const selection = Math.floor(Math.random()*motivation_topics.length);
+	const selection = Math.round(Math.random()*motivation_topics.length);
 	console.log("selection: ", selection);
 
 	const selected_topic = motivation_topics.at(selection);
