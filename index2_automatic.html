@@ -358,7 +358,7 @@ async function display_image(generated_text_array, image_url){
 		// Draw image on canvas
 		document.getElementById("canvas_img").style.display = "block";
 		
-		ctx.drawImage(image, 0,0);
+		ctx.drawImage(document.getElementById("img_element"), 0,0);
 
 		// ------------------------------
 
@@ -589,7 +589,7 @@ async function display_image_without_text(image_url) {
 	document.getElementById("img_element").onload = await function () { 
 		// Draw image on canvas
 		document.getElementById("canvas_img").style.display = "block";
-		ctx.drawImage(image, 0,0);
+		ctx.drawImage(document.getElementById("img_element"), 0,0);
 	}
 
 	// ------------------------------
