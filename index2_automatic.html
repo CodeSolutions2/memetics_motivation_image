@@ -275,13 +275,13 @@ async function run_selection() {
 		// Fetch the image from GCP Storage Bucket
 		const image_url = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
 
-		document.getElementById('notification').innerHTML = "Please wait, image is bein retrieved."
+		document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
 		
 		await display_image_without_text(image_url);
 
 		document.getElementById("progress_bar").value = (6/6)*100;
 
-		document.getElementById('notification').innerHTML = "";
+		await document.getElementById('notification').innerHTML = "";
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
