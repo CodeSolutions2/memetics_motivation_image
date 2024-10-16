@@ -245,6 +245,8 @@ async function run_selection() {
 		const imageData = await display_image(_array, image_url);
 		console.log('imageData: ', imageData);
 
+	
+
 		
 	} else if (dropdown_option_type == 'google_imagen') {
 		
@@ -348,8 +350,6 @@ async function select_motivation_topic() {
 
 async function display_image(generated_text_array, image_url){
 	
-	// image = await new Image();
-	// image.setAttribute("id", "img_element");
 	document.getElementById("img_element").src = image_url;
 	
 	// Display image on canvas
@@ -413,7 +413,7 @@ async function display_image(generated_text_array, image_url){
 
 async function share_w_GCP() {
 
-	// Save canvas image as a [blob_object OR URL]
+	// Save canvas image (includes both the image and text)
 	// const base64_data = document.getElementById("canvas_img").toDataURL();
 	// console.log("base64_data: ", base64_data);
 	// Uncaught (in promise) DOMException: The operation is insecure.
@@ -422,31 +422,6 @@ async function share_w_GCP() {
 	
 	const url = document.getElementById("img_element").src;
 	console.log('url: ', url);
-	
-	var headers_final = {
-		"Content-Type": "application/json",
-		"Referer": url,
-		"Origin": "https://codesolutions2.github.io",
-		"Connection": "keep-alive",
-		"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:120.0) Gecko/20100101 Firefox/120.0",
-		"Access-Control-Allow-Origin": "*",
-	};
-	var options = { 
-		method : "GET",
-		mode: 'cors',
-		headers: new Headers(headers_final),
-		cache: "no-cache",
-		crossorigin: '*',
-		redirect: "follow"
-	};
-	const github_url_of_data = await fetch(url, options)
-		.then(response => response.blob())
-		.then(async function(blob_object) { return new File ([blob_object], "image_file", {type: "image/png"});; })
-		.then(async function(file_blob_object) { return URL.createObjectURL(file_blob_object); })
-		.catch(error => console.error("error: ", error));
-	console.log("github_url_of_data: ", github_url_of_data);
-	
-	// OR
 	
 	var settings = {
 		type : 'GET',
@@ -458,6 +433,14 @@ async function share_w_GCP() {
 	};
 	var blob_object = $.ajax(url, [,settings]).done(function(response) { return response; });
 	console.log("blob_object: ", blob_object);
+
+	// How to transform to a url
+	// const github_url_of_data = await new File ([blob_object], "image_file", {type: "image/png"});; })
+	// 	.then(async function(file_blob_object) { return URL.createObjectURL(file_blob_object); })
+	// 	.catch(error => console.error("error: ", error));
+	// console.log("github_url_of_data: ", github_url_of_data);
+
+
 	
 	// Authenticate GCP
 	// $BUCKET_NAME
@@ -577,9 +560,6 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 // -------------------------------------------------
 
 async function display_image_without_text(image_url) {
-	
-	// image = await new Image();
-	// image.setAttribute("id", "img_element");
 	
 	document.getElementById("img_element").src = image_url;
 	document.getElementById("img_element").setAttribute('crossOrigin', "");
