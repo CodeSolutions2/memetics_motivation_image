@@ -415,9 +415,13 @@ async function share_w_GCP() {
 
 	// Save canvas image as a [blob_object OR URL]
 	const base64_data = document.getElementById("canvas_img").toDataURL();
+	console.log("base64_data: ", base64_data);
+	
 	// OR
+	
 	const url = document.getElementById("img_element").src;
 	console.log('url: ', url);
+	
 	var headers_final = {
 		"Content-Type": "application/json",
 		"Referer": url,
@@ -439,7 +443,10 @@ async function share_w_GCP() {
 		.then(async function(blob_object) { return new File ([blob_object], "image_file", {type: "image/png"});; })
 		.then(async function(file_blob_object) { return URL.createObjectURL(file_blob_object); })
 		.catch(error => console.error("error: ", error));
+	console.log("github_url_of_data: ", github_url_of_data);
+	
 	// OR
+	
 	var settings = {
 		type : 'GET',
 		async: true,
@@ -449,6 +456,7 @@ async function share_w_GCP() {
 		error: function(xhr, status, error) { console.log('Error:', error); }
 	};
 	var blob_object = $.ajax(url, [,settings]).done(function(response) { return response; });
+	console.log("blob_object: ", blob_object);
 	
 	// Authenticate GCP
 	// $BUCKET_NAME
