@@ -157,6 +157,14 @@ async function processEvent_dropdown_options(event) {
 		document.getElementById("image_size_list_dalle2").style.display = 'none';
 		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle3").style.display = 'none';
+
+	} else if (document.getElementById("dropdown_options").selectedIndex == 4) {
+		document.getElementById("enter_key").style.display = 'none';
+		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle2").style.display = 'none';
+		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
+		document.getElementById("image_size_list_dalle3").style.display = 'none';
 	}
 }
 
@@ -260,9 +268,15 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (5/6)*100;
 		
 		// Fetch the image from GCP Storage Bucket
-		await show_image_from_GCP_Storage_Bucket(selected_image);
+		const image_url = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
+
+		document.getElementById('notification').innerHTML = "Please wait, image is bein retrieved."
+		
+		await display_image_without_text(image_url);
 
 		document.getElementById("progress_bar").value = (6/6)*100;
+
+		document.getElementById('notification').innerHTML = ""
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
@@ -272,15 +286,6 @@ async function run_selection() {
 	document.getElementById("progress_bar").style.display = "none";
 }
 	
-
-async function show_image_from_GCP_Storage_Bucket(selected_image) {
-	
-	const image = new Image();
-	image.setAttribute('crossOrigin', "");
-	image.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	image.onload = async () => { ctx.drawImage(image, 0, 0, width, height); };
-	image.src = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
-}
 	
 
   
@@ -470,9 +475,8 @@ async function List_bucket_contents() {
 				file_array = [];
 				for (var i=0; i<xmlDocument.items.length; i++) {
 					file_array.push(xmlDocument.items[i].name);
-					document.getElementById('notification').innerHTML += xmlDocument.items[i].name+"<br>"
 				}
-				console.log('file_array: ', file_array);
+				// console.log('file_array: ', file_array);
 				return file_array;
 			})
 			.catch(error => console.error(error));
@@ -490,6 +494,25 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 	};
 	
 	return $.ajax(url, [,settings]).done(function(response) { return response; });
+}
+
+// -------------------------------------------------
+
+async function display_image_without_text(image_url) {
+	
+	image = await new Image();
+	image.src = image_url;
+	image.setAttribute('crossOrigin', "");
+	image.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	
+	// Display image on canvas
+	image.onload = await function () { 
+		// Draw image on canvas
+		document.getElementById("canvas_img").style.display = "block";
+		ctx.drawImage(image, 0,0);
+	}
+	
+	return await ctx.getImageData(0, 0, width, height);
 }
 
 // -------------------------------------------------
