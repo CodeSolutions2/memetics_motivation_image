@@ -331,7 +331,7 @@ async function create_image_call_API_OpenAI(model_name, image_size, motivational
 async function select_motivation_topic() {
 	
 	// Generate one random number from [0 to motivation_topics.length]
-	const selection = Math.round(Math.random()*motivation_topics.length);
+	const selection = Math.floor(Math.random()*motivation_topics.length);
 	console.log("selection: ", selection);
 
 	const selected_topic = motivation_topics.at(selection);
