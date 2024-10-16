@@ -66,7 +66,7 @@
 
 <!-- View results -->
 <td id="display_area">
-<div style="width:100%;height:100%;position:absolute;vertical-align:middle;text-align:left;"><canvas id="canvas_img" width="224" height="224" style="display:none"></canvas><div>
+<div style="width:100%;height:100%;position:absolute;vertical-align:middle;text-align:left;"><canvas id="canvas_img" width="224" height="224" style="display:none"><img id="img_element"></img></canvas><div>
 <div id="notification" style="font-family:courier;font-size:15px;"></div>
 <div id="error" style="font-family:courier;font-size:15px;"></div>
 
@@ -348,12 +348,12 @@ async function select_motivation_topic() {
 
 async function display_image(generated_text_array, image_url){
 	
-	image = await new Image();
-	image.setAttribute("id", "img_element");
-	image.src = image_url;
+	// image = await new Image();
+	// image.setAttribute("id", "img_element");
+	document.getElementById("img_element").src = image_url;
 	
 	// Display image on canvas
-	image.onload = await function () { 
+	document.getElementById("img_element").onload = await function () { 
 
 		// Draw image on canvas
 		document.getElementById("canvas_img").style.display = "block";
@@ -578,15 +578,15 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 
 async function display_image_without_text(image_url) {
 	
-	image = await new Image();
-	image.setAttribute("id", "img_element");
+	// image = await new Image();
+	// image.setAttribute("id", "img_element");
 	
-	image.src = image_url;
-	image.setAttribute('crossOrigin', "");
-	image.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	document.getElementById("img_element").src = image_url;
+	document.getElementById("img_element").setAttribute('crossOrigin', "");
+	document.getElementById("img_element").setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
 	
 	// Display image on canvas
-	image.onload = await function () { 
+	document.getElementById("img_element").onload = await function () { 
 		// Draw image on canvas
 		document.getElementById("canvas_img").style.display = "block";
 		ctx.drawImage(image, 0,0);
