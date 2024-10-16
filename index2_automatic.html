@@ -212,7 +212,6 @@ async function run_selection() {
 		const imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
 
-		document.getElementById("progress_bar").value = (6/6)*100;
 		
 	} else if (dropdown_option_type == 'openai_dalle3') {
 		const model_name = 'dall-e-3';
@@ -241,11 +240,11 @@ async function run_selection() {
 		const imageData = await display_image(_array, image_url);
 		console.log('imageData: ', imageData);
 
-		document.getElementById("progress_bar").value = (6/6)*100;
-
+		
 	} else if (dropdown_option_type == 'google_imagen') {
 		
 		document.getElementById('notification').innerHTML = "In progress.";
+		
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
 
@@ -279,16 +278,11 @@ async function run_selection() {
 		
 		await display_image_without_text(image_url);
 
-		document.getElementById("progress_bar").value = (6/6)*100;
-
-		await document.getElementById('notification').innerHTML = "";
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
 	}
 
-	// Remove progress bar after processing
-	document.getElementById("progress_bar").style.display = "none";
 }
 	
 	
@@ -389,6 +383,17 @@ async function display_image(generated_text_array, image_url){
 		// ------------------------------
 		
 	}
+
+	// ------------------------------
+	
+	document.getElementById("progress_bar").value = (6/6)*100;
+	
+	document.getElementById('notification').innerHTML = "";
+
+	// Remove progress bar after processing
+	document.getElementById("progress_bar").style.display = "none";
+
+	// ------------------------------
 	
 	return await ctx.getImageData(0, 0, width, height);
 }
@@ -516,6 +521,17 @@ async function display_image_without_text(image_url) {
 		document.getElementById("canvas_img").style.display = "block";
 		ctx.drawImage(image, 0,0);
 	}
+
+	// ------------------------------
+	
+	document.getElementById("progress_bar").value = (6/6)*100;
+	
+	document.getElementById('notification').innerHTML = "";
+
+	// Remove progress bar after processing
+	document.getElementById("progress_bar").style.display = "none";
+
+	// ------------------------------
 	
 	return await ctx.getImageData(0, 0, width, height);
 }
