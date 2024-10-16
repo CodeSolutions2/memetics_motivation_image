@@ -54,9 +54,6 @@
 <button id="run_selection" onclick="run_selection()" style="display:block;">[2] Display the image</button>
 <hr id="line_0" style="display:none;">
 
-<br><br>
-
-<button id="share_w_GCP" onclick="share_w_GCP()" style="display:none;">[3] Share with GCP database</button>
 <hr id="line_0" style="display:none;">
 
 <br><br>
@@ -92,8 +89,7 @@ tr {vertical-align: top; border: 0px solid black; padding: 10px 50px; }
 th, td {vertical-align: top; border: 0px solid black; padding: 10px; }
 th#pdf_viewer_input {width: 100%; }
 th#pdf_viewer_output {width: 100%; }
-
-button#share_w_GCP {background: goldenrod;}
+	
 </style>
 
 
@@ -123,6 +119,8 @@ var height;
 const padding = 4;
 
 const BUCKET_NAME = "meme-motivation";
+
+var imageData;
 
 // ------------------------------------------
 // UI
@@ -214,7 +212,7 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (5/6)*100;
 		
 		// Display image
-		const imageData = await display_image(generated_text_array, image_url);
+		imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
 
 		
@@ -242,11 +240,8 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (5/6)*100;
 
 		// Display image
-		const imageData = await display_image(_array, image_url);
+		imageData = await display_image(_array, image_url);
 		console.log('imageData: ', imageData);
-
-	
-
 		
 	} else if (dropdown_option_type == 'google_imagen') {
 		
@@ -398,56 +393,12 @@ async function display_image(generated_text_array, image_url){
 
 	// Remove progress bar after processing
 	document.getElementById("progress_bar").style.display = "none";
-
-	// ------------------------------
-
-	// Make button appear where users can share images
-	document.getElementById("share_w_GCP").style.display = "block";
 	
 	// ------------------------------
 	
 	return await ctx.getImageData(0, 0, width, height);
 }
 
-// ------------------------------------------
-
-async function share_w_GCP() {
-
-	// Save canvas image (includes both the image and text)
-	// const base64_data = document.getElementById("canvas_img").toDataURL();
-	// console.log("base64_data: ", base64_data);
-	// Uncaught (in promise) DOMException: The operation is insecure.
-	
-	// OR
-	
-	const url = document.getElementById("img_element").src;
-	console.log('url: ', url);
-	
-	var settings = {
-		type : 'GET',
-		async: true,
-		crossDomain: true,
-		beforeSend: function(xhr) { xhr.withCredentials = true; },
-		success: function(response) { console.log('Success'); },
-		error: function(xhr, status, error) { console.log('Error:', error); }
-	};
-	var blob_object = $.ajax(url, [,settings]).done(function(response) { return response; });
-	console.log("blob_object: ", blob_object);
-
-	// How to transform to a url
-	// const github_url_of_data = await new File ([blob_object], "image_file", {type: "image/png"});; })
-	// 	.then(async function(file_blob_object) { return URL.createObjectURL(file_blob_object); })
-	// 	.catch(error => console.error("error: ", error));
-	// console.log("github_url_of_data: ", github_url_of_data);
-
-
-	
-	// Authenticate GCP
-	// $BUCKET_NAME
-
-	// Send [blob or base64] to storage
-	// gcloud storage cp /home/runner/work/repoNAME/repoNAME/$DESIRED_FILE_NAME gs://$BUCKET_NAME/
-}
 
 // ------------------------------------------
 	
