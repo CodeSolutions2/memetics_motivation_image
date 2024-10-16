@@ -414,8 +414,9 @@ async function display_image(generated_text_array, image_url){
 async function share_w_GCP() {
 
 	// Save canvas image as a [blob_object OR URL]
-	const base64_data = document.getElementById("canvas_img").toDataURL();
-	console.log("base64_data: ", base64_data);
+	// const base64_data = document.getElementById("canvas_img").toDataURL();
+	// console.log("base64_data: ", base64_data);
+	// Uncaught (in promise) DOMException: The operation is insecure.
 	
 	// OR
 	
