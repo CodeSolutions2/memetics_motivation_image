@@ -94,7 +94,9 @@ button#download_button {background: goldenrod;}
 
 
 <!-- --------------------------------------------------- -->
-	
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
 
 // ------------------------------------------
@@ -105,7 +107,7 @@ window.addEventListener('beforeunload', function() {
 });
 
 // ------------------------------------------
-	
+
 const motivation_topics = ["health", "education", "life-balance", "happiness", "success", "effective communication"];
 
 var ctx = document.getElementById("canvas_img").getContext("2d");
@@ -115,6 +117,7 @@ var width;
 var height;
 const padding = 4;
 
+const BUCKET_NAME = "meme-motivation";
 
 // ------------------------------------------
 // UI
@@ -202,8 +205,6 @@ async function run_selection() {
 		console.log('imageData: ', imageData);
 
 		document.getElementById("progress_bar").value = (6/6)*100;
-
-		document.getElementById("progress_bar").style.display = "block";
 		
 	} else if (dropdown_option_type == 'openai_dalle3') {
 		const model_name = 'dall-e-3';
@@ -234,25 +235,53 @@ async function run_selection() {
 
 		document.getElementById("progress_bar").value = (6/6)*100;
 
-		document.getElementById("progress_bar").style.display = "block";
-
 	} else if (dropdown_option_type == 'google_imagen') {
+		
 		document.getElementById('notification').innerHTML = "In progress.";
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
 
+		document.getElementById("progress_bar").value = (2/6)*100;
+			
 		// Fetch a list of the contents of the GCP Storage Bucket
+		var file_array = await List_bucket_contents();
 
-    
-    
+		document.getElementById("progress_bar").value = (3/6)*100;
+		
+		// Randomize which image to obtain
+		const selection = Math.round(Math.random()*file_array.length);
+		console.log("selection: ", selection);
+
+		document.getElementById("progress_bar").value = (4/6)*100;
+		
+		const selected_image = file_array.at(selection);
+		console.log("selected_image: ", selected_image);
+
+		document.getElementById("progress_bar").value = (5/6)*100;
+		
+		// Fetch the image from GCP Storage Bucket
+		await show_image_from_GCP_Storage_Bucket(selected_image);
+
+		document.getElementById("progress_bar").value = (6/6)*100;
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
 	}
 
+	// Remove progress bar after processing
+	document.getElementById("progress_bar").style.display = "none";
 }
 	
 
+async function show_image_from_GCP_Storage_Bucket(selected_image) {
+	
+	const image = new Image();
+	image.setAttribute('crossOrigin', "");
+	image.setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
+	image.onload = async () => { ctx.drawImage(image, 0, 0, width, height); };
+	image.src = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
+}
+	
 
   
 
@@ -431,11 +460,10 @@ async function preprocess_text(generated_text) {
 
 async function List_bucket_contents() {
 	
-	// List contents of bucket to the output 
-
-	var url = `https://storage.googleapis.com/storage/v1/b/${document.getElementById("GCP_bucket_name").value}/o`
+	// List contents of the bucket
+	var url = `https://storage.googleapis.com/storage/v1/b/${BUCKET_NAME}/o`
 	
-	await fetch_on_cloud_storage_return_contents_list(url)
+	return await fetch_on_cloud_storage_return_contents_list(url)
 			.then(async function(xmlDocument) {
 				console.log('xmlDocument: ', xmlDocument);
 				
@@ -445,8 +473,9 @@ async function List_bucket_contents() {
 					document.getElementById('notification').innerHTML += xmlDocument.items[i].name+"<br>"
 				}
 				console.log('file_array: ', file_array);
+				return file_array;
 			})
-
+			.catch(error => console.error(error));
 }
 
 async function fetch_on_cloud_storage_return_contents_list(url) {
