@@ -24,4 +24,4 @@ Manual Meme Motivation Examples:
 ![alt_text](have_hope_in_the_world.png)
 
 ## Automatic Meme Motivation 
-[Try Automatic Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index1_automatic.html
+[Try Automatic Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index2_automatic.html
