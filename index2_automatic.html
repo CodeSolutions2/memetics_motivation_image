@@ -514,25 +514,6 @@ async function display_image_without_text(image_url) {
 	
 	document.getElementById("img_element").src = image_url;
 
-	// OR
-
-	var settings = {
-		type : 'GET',
-		async: true,
-		crossDomain: true,
-		xhrFields: {responseType: 'blob'},
-		dataType: 'binary',
-		beforeSend: function(xhr) { xhr.withCredentials = true; },
-		success: function(response) { console.log('Success'); },
-		error: function(xhr, status, error) { console.log('Error:', error); }
-	};
-	
-	var blob_object = $.ajax(image_url, [,settings]).done(function(response) { return response; });
-	
-	// document.getElementById("img_element").src = blob_object;
-	// document.getElementById("img_element").setAttribute('crossOrigin', "");
-	// document.getElementById("img_element").setAttribute('headers', {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"});
-	
 	// Display image on canvas
 	document.getElementById("img_element").onload = await function () { 
 		// Draw image on canvas
