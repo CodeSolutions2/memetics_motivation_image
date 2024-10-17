@@ -31,7 +31,9 @@
 <!-- Drop down menu -->
 <h3 id="enter_key" style="display:none">[0] Enter OPENAI_API_KEY, be sure to obtain a OpenAI key from https://platform.openai.com/login?launch.</h3>
 <input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
-
+<h3 id="enter_key0" style="display:none">[0] Enter GOOGLE_API_KEY, be sure to obtain a Google key from https://aistudio.google.com/app/apikey.</h3>
+<input id="GOOGLE_API_KEY" type="text" value="" placeholder="GOOGLE_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
+	
 
 <label id="image_size_list_dalle2_label" style="display:none">Select a desired image size:</label>
 <select name="image_size_list_dalle2" id="image_size_list_dalle2" style="display:none">
@@ -130,40 +132,55 @@ async function processEvent_dropdown_options(event) {
 	console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
+		// Select an option
 		document.getElementById("enter_key").style.display = 'none';
 		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("enter_key0").style.display = 'none';
+		document.getElementById("GOOGLE_API_KEY").style.display = 'none';
 		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle2").style.display = 'none';
 		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle3").style.display = 'none';
 		
 	} else if (document.getElementById("dropdown_options").selectedIndex == 1) {
+		// OpenAI dall-e-2
 		document.getElementById("enter_key").style.display = 'block';
 		document.getElementById("OPENAI_API_KEY").style.display = 'block';
+		document.getElementById("enter_key0").style.display = 'none';
+		document.getElementById("GOOGLE_API_KEY").style.display = 'none';
 		document.getElementById("image_size_list_dalle2_label").style.display = 'block';
 		document.getElementById("image_size_list_dalle2").style.display = 'block';
 		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle3").style.display = 'none';
 
 	} else if (document.getElementById("dropdown_options").selectedIndex == 2) {
+		// OpenAI dall-e-3
 		document.getElementById("enter_key").style.display = 'block';
 		document.getElementById("OPENAI_API_KEY").style.display = 'block';
+		document.getElementById("enter_key0").style.display = 'none';
+		document.getElementById("GOOGLE_API_KEY").style.display = 'none';
 		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle2").style.display = 'none';
 		document.getElementById("image_size_list_dalle3_label").style.display = 'block';
 		document.getElementById("image_size_list_dalle3").style.display = 'block';
 		
 	} else if (document.getElementById("dropdown_options").selectedIndex == 3) {
+		// Google imagen
 		document.getElementById("enter_key").style.display = 'none';
 		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("enter_key0").style.display = 'block';
+		document.getElementById("GOOGLE_API_KEY").style.display = 'block';
 		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle2").style.display = 'none';
 		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle3").style.display = 'none';
 
 	} else if (document.getElementById("dropdown_options").selectedIndex == 4) {
+		// Free image from database
 		document.getElementById("enter_key").style.display = 'none';
 		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("enter_key0").style.display = 'none';
+		document.getElementById("GOOGLE_API_KEY").style.display = 'none';
 		document.getElementById("image_size_list_dalle2_label").style.display = 'none';
 		document.getElementById("image_size_list_dalle2").style.display = 'none';
 		document.getElementById("image_size_list_dalle3_label").style.display = 'none';
@@ -240,12 +257,37 @@ async function run_selection() {
 		document.getElementById("progress_bar").value = (5/6)*100;
 
 		// Display image
-		imageData = await display_image(_array, image_url);
+		imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
 		
 	} else if (dropdown_option_type == 'google_imagen') {
+
+		document.getElementById("progress_bar").value = (2/6)*100;
+		document.getElementById("progress_bar").value = (3/6)*100;
+
+		// ------------------------------
 		
-		document.getElementById('notification').innerHTML = "In progress.";
+		// Generate automated message for the image
+		const generated_text = await create_text_call_API_Gemini(motivational_text_prompt);
+		console.log("generated_text: ", generated_text);
+
+		document.getElementById("progress_bar").value = (4/6)*100;
+
+		// ------------------------------
+		
+		const generated_text_array = await preprocess_text(generated_text);
+
+		document.getElementById("progress_bar").value = (5/6)*100;
+
+		// ------------------------------
+	
+		// Display output
+		var image_url = "";
+		var option_image = ['solid', 'gradient'].at(Math.floor(Math.random()*2));
+		console.log('option_image: ', option_image);
+		var option_text = 'with_text';
+		imageData = await display_all(generated_text_array, image_url, option_image, option_text);
+		console.log('imageData: ', imageData);
 		
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
@@ -266,20 +308,30 @@ async function run_selection() {
 		const selected_image = file_array.at(selection);
 		console.log("selected_image: ", selected_image);
 
+		// ------------------------------
+		
 		// Obtain image size, and set canvas size
 		const selected_image_arr = selected_image.split('_');
 		const image_size = selected_image_arr.at(1);
 		await assign_width_height(image_size);
 
 		document.getElementById("progress_bar").value = (5/6)*100;
+
+		// ------------------------------
 		
 		// Fetch the image from GCP Storage Bucket
 		const image_url = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
 
 		document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
-		
-		await display_image_without_text(image_url);
 
+		// ------------------------------
+		
+		// Display output
+		var generated_text_array = "";
+		var option_image = 'image';
+		var option_text = 'without_text';
+		imageData = await display_all(generated_text_array, image_url, option_image, option_text);
+		console.log('imageData: ', imageData);
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
@@ -343,43 +395,77 @@ async function select_motivation_topic() {
 
 // ------------------------------------------
 
-async function display_image(generated_text_array, image_url){
-	
-	document.getElementById("img_element").src = image_url;
+async function display_all(generated_text_array, image_url, option_image, option_text) {
 	
 	// Display image on canvas
 	document.getElementById("img_element").onload = await function () { 
-
-		// Draw image on canvas
+		
+		// ------------------------------
+		
+		// Make cavas visible
 		document.getElementById("canvas_img").style.display = "block";
-		
-		ctx.drawImage(document.getElementById("img_element"), 0,0);
-
-		// ------------------------------
-
-		// Put overlay on top of image to make font more readable
-		ctx.fillStyle = "rgb(153 153 153 / 50%)";  // Background square over image = grey
-    		ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
-
-		// ------------------------------
-
-		// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
-		const RGB = [0, 0, 0]; // black 
-		console.log("RGB: ", RGB);
 
 		// ------------------------------
 		
-		const x = 30;
-		var y = 50;
-	
-		ctx.font = "bold "+font_height.toString()+"px serif";
-		ctx.textAlign = "left";
-		ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
+		// Draw image on canvas
+		// var option_image = // 'image', 'solid', 'gradient'
+
+		if ( option_image == 'image') {
+			// Make an image appear on the canvas
+			document.getElementById("img_element").src = image_url;
+			ctx.drawImage(document.getElementById("img_element"), 0,0);
+			
+			// Put overlay on top of image to make font more readable
+			ctx.fillStyle = "rgb(153 153 153 / 50%)";  // Background square over image = grey
+			ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
 		
-		generated_text_array.map((phrase, ind) => {
-			ctx.fillText(phrase, x, y, width);
-			y = y + Number(font_height) + padding;
-		});
+		} else if ( option_image == 'solid') {
+		
+			// Make a solid colored background appear on the canvas
+			const r = Math.floor(Math.random()*255);
+			const g = Math.floor(Math.random()*255);
+			const b = Math.floor(Math.random()*255);
+			const alpha = Math.floor(Math.random()*100);
+			ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
+			ctx.fillRect(0, 0, width, height);
+
+  		} else if ( option_image == 'gradient') {
+
+	    		// Make a gradient colored background appear on the canvas
+			const max_val = 20;
+			const num_of_squares = Math.floor(Math.random()*max_val);
+	      		for (let i = 0; i < num_of_squares; i++) {
+				for (let j = 0; j < num_of_squares; j++) {
+					let k = Math.floor(Math.random()*(num_of_squares-1));
+					ctx.fillStyle = `rgb(${Math.floor((255 - 255/num_of_squares)*i)} ${Math.floor((255 - 255/num_of_squares)*j)} ${Math.floor((255 - 255/num_of_squares)*k)} / 75%)`;
+					ctx.fillRect(j*(255/num_of_squares), i*(255/num_of_squares), 255/num_of_squares, 255/num_of_squares);
+				}
+			}
+
+		}
+		
+		// ------------------------------
+		
+		// var option_text = // 'with_text', 'without_text'
+		
+		if (option_text == 'with_text') {
+			// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
+			const RGB = [0, 0, 0]; // black
+			console.log("RGB: ", RGB);
+		
+			const x = 30;
+			var y = 50;
+		
+			ctx.font = "bold "+font_height.toString()+"px serif";
+			ctx.textAlign = "left";
+			ctx.fillStyle = "rgb("+RGB[0]+" "+RGB[1]+" "+RGB[2]+")";
+			
+			generated_text_array.map((phrase, ind) => {
+				ctx.fillText(phrase, x, y, width);
+				y = y + Number(font_height) + padding;
+			});
+		
+		}
 
 		// ------------------------------
 		
@@ -399,8 +485,7 @@ async function display_image(generated_text_array, image_url){
 	return await ctx.getImageData(0, 0, width, height);
 }
 
-
-// ------------------------------------------
+// -----------------------------------------------
 	
 async function create_text_call_API_OpenAI(motivational_text_prompt) {
 
@@ -418,6 +503,33 @@ async function create_text_call_API_OpenAI(motivational_text_prompt) {
 		.then(res => res.json())
 		.then(res => { return JSON.parse(JSON.stringify(res))['choices'][0]['message']['content']; })
 		.catch(error => { document.getElementById('error').innerHTML = error; });
+
+	// Replace hypens with spaces
+	generated_text = await generated_text.replace(/-/g, " ");
+	
+	// Replace double hypens with [dot space]
+	generated_text = await generated_text.replace(/—/g, ". ");
+
+	return generated_text;
+}
+
+// ------------------------------------------
+	
+async function create_text_call_API_Gemini(motivational_text_prompt) {
+	
+        var contents = [{"parts": [{"text": motivational_text_prompt}]}];
+        var data = {"contents": contents};
+  
+        var url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GOOGLE_API_KEY}`;
+  
+        var headers = {"Content-Type": "application/json"}
+        var options = {method : 'post', headers: headers, body : JSON.stringify(data)};
+
+        // Print text part of JSON response only with user message
+        var generated_text = await fetch(url, options)
+            .then(res => res.json())
+            .then(res => { console.log("res: ", res); return JSON.parse(JSON.stringify(res))['candidates'][0]['content']['parts'][0]['text']; })
+            .catch(error => { console.log("error: ", error); document.getElementById('error').innerHTML = error; });
 
 	// Replace hypens with spaces
 	generated_text = await generated_text.replace(/-/g, " ");
@@ -509,34 +621,7 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 }
 
 // -------------------------------------------------
-
-async function display_image_without_text(image_url) {
-	
-	document.getElementById("img_element").src = image_url;
-
-	// Display image on canvas
-	document.getElementById("img_element").onload = await function () { 
-		// Draw image on canvas
-		document.getElementById("canvas_img").style.display = "block";
-		ctx.drawImage(document.getElementById("img_element"), 0,0);
-	}
-
-	// ------------------------------
-	
-	document.getElementById("progress_bar").value = (6/6)*100;
-	
-	document.getElementById('notification').innerHTML = "";
-
-	// Remove progress bar after processing
-	document.getElementById("progress_bar").style.display = "none";
-
-	// ------------------------------
-	
-	return await ctx.getImageData(0, 0, width, height);
-}
-
-// -------------------------------------------------
-
+		
 
 </script>
 </body>
