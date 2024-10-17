@@ -336,7 +336,7 @@ async function select_motivation_topic() {
 	
 	const motivational_image_prompt = `Create an image, without text writing, about ${selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}.`;
 
-	const motivational_text_prompt = `Write a motivational sentence to encourage ${selected_topic}. Be creative and give varying responses.`;
+	const motivational_text_prompt = `Write a motivational sentence to encourage ${selected_topic}. Be creative and give varying responses, limit the response to 25 words or less.`;
 
 	return [motivational_image_prompt, motivational_text_prompt];
 }
