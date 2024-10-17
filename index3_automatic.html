@@ -520,7 +520,7 @@ async function create_text_call_API_Gemini(motivational_text_prompt) {
         var contents = [{"parts": [{"text": motivational_text_prompt}]}];
         var data = {"contents": contents};
   
-        var url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GOOGLE_API_KEY}`;
+        var url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${document.getElementById("GOOGLE_API_KEY").value}`;
   
         var headers = {"Content-Type": "application/json"}
         var options = {method : 'post', headers: headers, body : JSON.stringify(data)};
