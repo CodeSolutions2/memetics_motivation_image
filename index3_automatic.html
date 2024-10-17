@@ -256,6 +256,8 @@ async function run_selection() {
 
 		document.getElementById("progress_bar").value = (5/6)*100;
 
+		// ------------------------------
+		
 		// Display image
 		imageData = await display_image(generated_text_array, image_url);
 		console.log('imageData: ', imageData);
@@ -263,6 +265,12 @@ async function run_selection() {
 	} else if (dropdown_option_type == 'google_imagen') {
 
 		document.getElementById("progress_bar").value = (2/6)*100;
+
+		// ------------------------------
+		
+		var image_size = "512x512";
+		await assign_width_height(image_size);
+		
 		document.getElementById("progress_bar").value = (3/6)*100;
 
 		// ------------------------------
