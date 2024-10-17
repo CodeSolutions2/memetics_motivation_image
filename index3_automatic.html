@@ -404,21 +404,19 @@ async function select_motivation_topic() {
 // ------------------------------------------
 
 async function display_all(generated_text_array, image_url, option_image, option_text) {
+
+	// Make cavas visible
+	document.getElementById("canvas_img").style.display = "block";
+
+	// ------------------------------
 	
 	// Display image on canvas
 	document.getElementById("img_element").onload = await function () { 
 		
-		// ------------------------------
-		
-		// Make cavas visible
-		document.getElementById("canvas_img").style.display = "block";
-
-		// ------------------------------
-		
 		// Draw image on canvas
-		// var option_image = // 'image', 'solid', 'gradient'
+		console.log("option_image: ", option_image);
 
-		if ( option_image == 'image') {
+		if (option_image == 'image') {
 			// Make an image appear on the canvas
 			document.getElementById("img_element").src = image_url;
 			ctx.drawImage(document.getElementById("img_element"), 0,0);
@@ -427,7 +425,7 @@ async function display_all(generated_text_array, image_url, option_image, option
 			ctx.fillStyle = "rgb(153 153 153 / 50%)";  // Background square over image = grey
 			ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
 		
-		} else if ( option_image == 'solid') {
+		} else if (option_image == 'solid') {
 		
 			// Make a solid colored background appear on the canvas
 			const r = Math.floor(Math.random()*255);
@@ -437,7 +435,7 @@ async function display_all(generated_text_array, image_url, option_image, option
 			ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
 			ctx.fillRect(0, 0, width, height);
 
-  		} else if ( option_image == 'gradient') {
+  		} else if (option_image == 'gradient') {
 
 	    		// Make a gradient colored background appear on the canvas
 			const max_val = 20;
@@ -454,7 +452,7 @@ async function display_all(generated_text_array, image_url, option_image, option
 		
 		// ------------------------------
 		
-		// var option_text = // 'with_text', 'without_text'
+		console.log("option_text: ", option_text);
 		
 		if (option_text == 'with_text') {
 			// Could measure the darkness and lightness of first half image pixels and make this a contrasting color
