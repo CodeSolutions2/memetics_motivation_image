@@ -1,4 +1,4 @@
-# meme_motivation_image
+# memetics_motivation_image
 
 ## Definition of meme
 "An Internet meme, or meme (/miːm/, "MEEM"), is a cultural item (such as an idea, behavior, or style) that spreads across the Internet, primarily through social media platforms. Internet memes manifest in a variety of formats, including images, videos, GIFs, and other viral content. Internet memes derive from the original concept of "memes" as units of cultural transmission, passed from person to person" [https://en.wikipedia.org/wiki/Internet_meme]. 
@@ -14,7 +14,7 @@ Hopefully this webapp will motivate others to have a productive and happy life, 
 
 
 ## Manual Meme Motivation 
-[Try Manual Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index3.html
+[Try Manual Meme Motivation] https://codesolutions2.github.io/memetics_motivation_image/index3.html
 
 Manual Meme Motivation Examples:
 
@@ -24,4 +24,4 @@ Manual Meme Motivation Examples:
 ![alt_text](have_hope_in_the_world.png)
 
 ## Automatic Meme Motivation 
-[Try Automatic Meme Motivation] https://codesolutions2.github.io/meme_motivation_image/index2_automatic.html
+[Try Automatic Meme Motivation] https://codesolutions2.github.io/memetics_motivation_image/index2_automatic.html
