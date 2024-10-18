@@ -17,7 +17,7 @@ Hopefully this webapp will motivate others to have a productive and happy life, 
 ## Manual Memetics Motivation 
 [Try Manual Memetics Motivation] https://codesolutions2.github.io/memetics_motivation_image/index3.html
 
-Manual Meme Motivation Examples:
+Manual Memetics Motivation Examples:
 
 ![alt_text](perseverance.png)
 
