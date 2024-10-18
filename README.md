@@ -11,7 +11,7 @@
 ## Intention of webapp
 Hopefully this webapp will motivate others to have a productive and happy life, using motivational Internet meme content. There are two versions of meme motivation, a manual and automatic version. 
 1. Using the manual version, one can use their own motivational image or generate an image, and then they can write their own motivational messsage on the image.
-2. Using the automatic version, one simply pushs the button and a motivational image and text are created using prompts on the topics of [health, education, life-balance, happiness, success, effective communication]. One of the five topics are randomly choosen and both an image and text are generated to create a unique motivational image based on chance for each user.
+2. Using the automatic version, one simply pushs the button and a motivational image and text are created using prompts on the topics of [health, education, life-balance, happiness, success, effective communication]. One of the six topics are randomly choosen and both an image and text are generated to create a unique motivational image based on chance for each user.
 
 
 ## Manual Memetics Motivation 
