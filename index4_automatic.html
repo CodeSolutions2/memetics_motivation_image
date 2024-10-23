@@ -520,7 +520,7 @@ function write_text(option_text, generated_text_array) {
 			ctx.fillText(phrase, x, y, width);
 
 			// Re-write text outline only, to make text contrasting on the image
-			ctx.fillStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
+			ctx.strokeStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
 			ctx.strokeText(phrase, x, y, width);
 			
 			y = y + Number(font_height) + padding;
