@@ -308,7 +308,9 @@ async function run_selection() {
 		// ------------------------------
 		
 		// Remove spaces from the begining of text in array
-		motivational_sentences = motivational_sentences.map((val, ind) => { return val.replace(/^\s+/g, ""); });
+		motivational_sentences = motivational_sentences.map((val, ind) => { return `"${val.replace(/^\s+/g, "")}"`; });
+		const NonEmptyVals_toKeep = (x) => x.length != 0;
+		motivational_sentences = motivational_sentences.filter(NonEmptyVals_toKeep);
 		console.log("motivational_sentences: ", motivational_sentences);
 
 		// ------------------------------
@@ -504,26 +506,26 @@ function write_text(option_text, generated_text_array) {
 		// const RGB_contrast = circle_map_opposite_color(r, g, b);
 		const RGB_contrast = [0, 0, 0];
 		console.log("RGB_contrast: ", RGB_contrast);
+
+		const RGB_opposite_contrast = [255, 255, 255];
 	
 		const x = 30;
 		var y = 50;
 		ctx.font = "bold "+font_height.toString()+"px serif";
 		ctx.textAlign = "left";
-
-		// Write text that is filled in
-		ctx.fillStyle = "rgb("+RGB_contrast[0]+" "+RGB_contrast[1]+" "+RGB_contrast[2]+")";
+		
 		generated_text_array.map((phrase, ind) => {
+			// Write text that is filled in
+			ctx.fillStyle = "rgb("+RGB_contrast[0]+" "+RGB_contrast[1]+" "+RGB_contrast[2]+")";
 			ctx.fillText(phrase, x, y, width);
+
+			// Re-write text outline only, to make text contrasting on the image
+			ctx.fillStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
+			ctx.strokeText(phrase, x, y, width);
+			
 			y = y + Number(font_height) + padding;
 		});
 
-		// Re-write text outline only, to make text contrasting on the image
-		const RGB_opposite_contrast = [255, 255, 255];
-		ctx.fillStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
-		generated_text_array.map((phrase, ind) => {
-			ctx.strokeText(phrase, x, y, width);
-			y = y + Number(font_height) + padding;
-		});
 	}
 }
 	
