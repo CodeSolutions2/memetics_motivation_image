@@ -450,11 +450,10 @@ async function display_all(generated_text_array, image_url, option_image, option
 
 	// ------------------------------
 
-	if (option_image == 'image') {
+	if (option_image == 'image' && option_text == 'with_text') {
 		// Make an image appear on the canvas
 		var image = new Image();
 		image.src = image_url;
-	
 		image.onload = await function () { 
 			// Draw image on canvas
 			ctx.drawImage(image, 0,0);
@@ -462,15 +461,21 @@ async function display_all(generated_text_array, image_url, option_image, option
 			write_text(option_text, generated_text_array);
 		}
 		
-	} else if (option_image == 'solid') {
+	} else if (option_image == 'solid' && option_text == 'with_text') {
 		await solid();
 		put_overlay_on_top_of_base_image();
 		write_text(option_text, generated_text_array);
 		
-	} else if (option_image == 'gradient') {
+	} else if (option_image == 'gradient' && option_text == 'with_text') {
 		await gradient();
 		put_overlay_on_top_of_base_image();
 		write_text(option_text, generated_text_array);
+		
+	} else {
+		// Make an image appear on the canvas
+		var image = new Image();
+		image.src = image_url;
+		image.onload = await function () { ctx.drawImage(image, 0,0); }
 	}
 
 	// ------------------------------
