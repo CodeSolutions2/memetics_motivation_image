@@ -291,16 +291,34 @@ async function run_selection() {
 		
 		// Generate automated message for the image
 		var generated_text = await create_text_call_API_Gemini(motivational_text_prompt);
-		console.log("generated_text: ", generated_text);
+		// console.log("generated_text: ", generated_text);
 
 		document.getElementById("progress_bar").value = (4/6)*100;
 
 		// ------------------------------
 
-		// Obtain first sentence of text
-		var all_generated_text = generated_text.split('.').at(0);
-		generated_text = all_generated_text.split(':').at(1);
-		//
+		// Obtain relevant sentences of text
+		var all_generated_text = generated_text.split(':').at(1);
+		console.log("all_generated_text: ", all_generated_text);
+
+		// Obtain an array of motivational sentences
+		var motivational_sentences = all_generated_text.split('.');
+		console.log("motivational_sentences: ", motivational_sentences);
+
+		// ------------------------------
+		
+		// Remove spaces from the begining of text in array
+		motivational_sentences = motivational_sentences.map((val, ind) => { return val.replace(/^\s+/g, ""); });
+		console.log("motivational_sentences: ", motivational_sentences);
+
+		// ------------------------------
+		
+		// Obtain a random selection of a phrase
+		var selection = Math.floor(Math.random() * motivational_sentences.length);
+		generated_text = motivational_sentences.at(selection);
+		console.log("generated_text: ", generated_text);
+
+		// ------------------------------
 		
 		const generated_text_array = await preprocess_text(generated_text);
 
@@ -502,9 +520,8 @@ function write_text(option_text, generated_text_array) {
 		// Re-write text outline only, to make text contrasting on the image
 		const RGB_opposite_contrast = [255, 255, 255];
 		ctx.fillStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
-		ctx.strokeText(phrase, x, y, width);
 		generated_text_array.map((phrase, ind) => {
-			ctx.fillText(phrase, x, y, width);
+			ctx.strokeText(phrase, x, y, width);
 			y = y + Number(font_height) + padding;
 		});
 	}
