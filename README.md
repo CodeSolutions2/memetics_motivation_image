@@ -25,4 +25,4 @@ Manual Memetics Motivation Examples:
 ![alt_text](have_hope_in_the_world.png)
 
 ## Automatic Memetics Motivation 
-[Try Automatic Memetics Motivation] https://codesolutions2.github.io/memetics_motivation_image/index3_automatic.html
+[Try Automatic Memetics Motivation] https://codesolutions2.github.io/memetics_motivation_image/index4_automatic.html
