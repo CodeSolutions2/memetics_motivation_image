@@ -15,7 +15,7 @@ Hopefully this webapp will motivate others to have a productive and happy life, 
 
 
 ## Manual Memetics Motivation 
-[Try Manual Memetics Motivation] https://codesolutions2.github.io/memetics_motivation_image/index3.html
+[Try Manual Memetics Motivation] https://codesolutions2.github.io/memetics_motivation_image/index.html
 
 Manual Memetics Motivation Examples:
 
@@ -25,4 +25,4 @@ Manual Memetics Motivation Examples:
 ![alt_text](have_hope_in_the_world.png)
 
 ## Automatic Memetics Motivation 
-[Try Automatic Memetics Motivation] https://codesolutions2.github.io/memetics_motivation_image/index4_automatic.html
+[Try Automatic Memetics Motivation] https://codesolutions2.github.io/memetics_motivation_image/index_automatic.html
