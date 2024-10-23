@@ -438,20 +438,18 @@ async function display_all(generated_text_array, image_url, option_image, option
 		image.onload = await function () { 
 			// Draw image on canvas
 			ctx.drawImage(image, 0,0);
-			
-			// Put overlay on top of image to make font more readable
-			ctx.fillStyle = "rgb(153 153 153 / 50%)";  // Background square over image = grey
-			ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
-
+			put_overlay_on_top_of_base_image();
 			write_text(option_text, generated_text_array);
 		}
 		
 	} else if (option_image == 'solid') {
 		await solid();
+		put_overlay_on_top_of_base_image();
 		write_text(option_text, generated_text_array);
 		
 	} else if (option_image == 'gradient') {
 		await gradient();
+		put_overlay_on_top_of_base_image();
 		write_text(option_text, generated_text_array);
 	}
 
@@ -471,6 +469,16 @@ async function display_all(generated_text_array, image_url, option_image, option
 
 // -----------------------------------------------
 
+function put_overlay_on_top_of_base_image() {
+	
+	// Put overlay on top of image to make font more readable and image to look more professional
+	ctx.fillStyle = "rgb(153 153 153 / 40%)";  // Background square over image = grey
+	ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
+	
+}
+	
+// -----------------------------------------------
+	
 function write_text(option_text, generated_text_array) {
 	
 	if (option_text == 'with_text') {
@@ -483,8 +491,18 @@ function write_text(option_text, generated_text_array) {
 		var y = 50;
 		ctx.font = "bold "+font_height.toString()+"px serif";
 		ctx.textAlign = "left";
+
+		// Write text that is filled in
 		ctx.fillStyle = "rgb("+RGB_contrast[0]+" "+RGB_contrast[1]+" "+RGB_contrast[2]+")";
-		
+		generated_text_array.map((phrase, ind) => {
+			ctx.fillText(phrase, x, y, width);
+			y = y + Number(font_height) + padding;
+		});
+
+		// Re-write text outline only, to make text contrasting on the image
+		const RGB_opposite_contrast = [255, 255, 255];
+		ctx.fillStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
+		ctx.strokeText(phrase, x, y, width);
 		generated_text_array.map((phrase, ind) => {
 			ctx.fillText(phrase, x, y, width);
 			y = y + Number(font_height) + padding;
