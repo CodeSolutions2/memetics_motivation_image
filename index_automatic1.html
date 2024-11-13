@@ -137,7 +137,10 @@ const motivation_topics = ["success", "success", "success", "success", "success"
 // const motivation_topics = ["effectiveCommunication", "effectiveCommunication", "effectiveCommunication", "effectiveCommunication", "effectiveCommunication", "effectiveCommunication"];
 	
 var ctx = document.getElementById("canvas_img").getContext("2d");
-	
+
+var font_height = 40;
+var width;
+var height;
 
 const padding = 4;
 const BUCKET_NAME = "memetics-motivation";
@@ -213,8 +216,7 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 // ------------------------------------------
 
 async function run_selection() {
-
-	var font_height = 40;
+	
 	var width = 512;
 	var height = 512;
 	
