@@ -374,15 +374,13 @@ async function run_selection() {
 		// ------------------------------
 		
 		// Find the index values for selected_topic and neutral_selection in the array.
-		var selected_topic_index = file_array_rand.map((text_str, ind) => { 
-			var regex = new RegExp(`${selected_topic}`, 'g');
-			if (regex.test(text_str) == true) {
-				return ind;
-			} else {
-				return '';
+		var regex = new RegExp(`${selected_topic}`, 'g');
+		var selected_topic_index = [];
+		for (let i=0; i<file_array_rand.length; i++) {
+			if (regex.test(file_array_rand.at(i)) == true) {
+				selected_topic_index.push(i);
 			}
-		});
-		selected_topic_index = selected_topic_index.filter((x) => x.length != 0);
+		}
 		console.log("selected_topic_index: ", selected_topic_index);
 
 		// ------------------------------
