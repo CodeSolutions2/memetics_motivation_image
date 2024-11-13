@@ -375,7 +375,7 @@ async function run_selection() {
 		
 		// Find the index values for selected_topic and neutral_selection in the array.
 		var regex = new RegExp(`${selected_topic}`, 'g');
-		var selected_topic_index = await obtain_selected_topic_index(regex, file_array_rand)
+		var selected_topic_index = await obtain_selected_topic_index(regex, file_array_rand);
 		console.log("selected_topic_index: ", selected_topic_index);
 
 		// ------------------------------
