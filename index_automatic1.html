@@ -374,8 +374,20 @@ async function run_selection() {
 		// ------------------------------
 		
 		// Find the index values for selected_topic and neutral_selection in the array.
-		var regex = new RegExp(`${selected_topic}`, 'g');
-		var selected_topic_index = await obtain_selected_topic_index(regex, file_array_rand);
+		// var regex = new RegExp(`${selected_topic}`, 'g');
+		// var selected_topic_index = await obtain_selected_topic_index(regex, file_array_rand);
+		// OR
+		var selected_topic_index = await file_array_rand.map((val, ind) => {
+			// return regex.test(val) == true ? ind : '';
+			// OR
+			// Split the string into characters
+			// var char_array_val = val.split('');
+			// var char_array_selected_topic = selected_topic.split('');
+			// OR
+			return [val].find((val) => val == selected_topic) == undefined ? '' : ind;
+		});
+		selected_topic_index = await selected_topic_index.filter((x) => x.length != 0);
+		
 		console.log("selected_topic_index: ", selected_topic_index);
 
 		// ------------------------------
