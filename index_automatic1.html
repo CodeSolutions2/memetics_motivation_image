@@ -454,17 +454,7 @@ async function run_selection() {
 }
 	
 	
-async function obtain_selected_topic_index(regex, file_array_rand) {
 
-	var selected_topic_index = [];
-	for (let i=0; i<file_array_rand.length; i++) {
-		var bool_val = regex.test(file_array_rand.at(i));
-		console.log("file_array_rand.at(i): ", file_array_rand.at(i));
-		console.log("bool_val: ", bool_val);
-		if (bool_val == true) { selected_topic_index.push(i); }
-	}
-	return selected_topic_index;
-}
   
 
 // ------------------------------------------
@@ -887,8 +877,25 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 }
 
 // -------------------------------------------------
-		
 
+async function obtain_selected_topic_index(regex, file_array_rand) {
+
+	var selected_topic_index = [];
+	for (let i=0; i<file_array_rand.length; i++) {
+		var bool_val = regex.test(file_array_rand.at(i));
+		console.log("bool_val: ", bool_val);
+		if (bool_val == true) { 
+			selected_topic_index.push(i);
+			console.log("file_array_rand.at(i): ", file_array_rand.at(i));
+		}
+	}
+	return selected_topic_index;
+}
+		
+// -------------------------------------------------
+
+
+	
 </script>
 </body>
 </html>
