@@ -224,7 +224,7 @@ async function run_selection() {
 	var dropdown_option_type = document.getElementById("dropdown_options").value;
 	
 	// Get randomly selected image and text prompts
-	const [image_prompt, text_prompt, selected_topic, neutral_selection] = await select_motivation_topic();
+	const [image_prompt, text_prompt, selected_topic, neutral_selection] = await select_topic();
 
 	// --------------------------------------
 
@@ -262,7 +262,6 @@ async function run_selection() {
 		
 		// Display image
 		imageData = await display_all(generated_text_array, image_url, 'image', 'with_text');
-		console.log('imageData: ', imageData);
 
 		
 	} else if (dropdown_option_type == 'openai_dalle3') {
@@ -296,7 +295,6 @@ async function run_selection() {
 		
 		// Display image
 		imageData = await display_all(generated_text_array, image_url, 'image', 'with_text');
-		// console.log('imageData: ', imageData);
 		
 	} else if (dropdown_option_type == 'google_imagen') {
 
@@ -353,7 +351,6 @@ async function run_selection() {
 		// Display output
 		var option_image = ['solid', 'gradient'].at(Math.floor(Math.random()*2));
 		imageData = await display_all(generated_text_array, '', option_image, 'with_text');
-		// console.log('imageData: ', imageData);
 		
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
@@ -372,7 +369,7 @@ async function run_selection() {
 
 		// Shuffle file_array directly.
 		var file_array_rand = file_array.sort(() => Math.random() - 0.5);
-		// console.log("file_array_rand: ", file_array_rand);
+		console.log("file_array_rand: ", file_array_rand);
 
 		// ------------------------------
 		
@@ -454,7 +451,6 @@ async function run_selection() {
 		
 		// Display output
 		imageData = await display_all('', image_url, 'image', 'without_text');
-		// console.log('imageData: ', imageData);
 
 		// ------------------------------
 		
@@ -502,11 +498,14 @@ async function create_image_call_API_OpenAI(model_name, image_size, image_prompt
 
 // ------------------------------------------
 
-async function select_motivation_topic() {
+async function select_topic() {
 
 	// Generate one random number from [0 to array_length]
 	const selected_topic = motivation_topics.at(Math.floor(Math.random()*motivation_topics.length));
+	console.log("selected_topic: ", selected_topic);
+	
 	const neutral_selection = neutralORnot.at(Math.floor(Math.random()*neutralORnot.length));
+	console.log("neutral_selection: ", neutral_selection);
 
 	// --------------------------------------
 	
@@ -858,7 +857,7 @@ async function List_bucket_contents() {
 	
 	return await fetch_on_cloud_storage_return_contents_list(url)
 			.then(async function(xmlDocument) {
-				console.log('xmlDocument: ', xmlDocument);
+				// console.log('xmlDocument: ', xmlDocument);
 				
 				file_array = [];
 				for (var i=0; i<xmlDocument.items.length; i++) {
