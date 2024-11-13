@@ -138,11 +138,8 @@ const motivation_topics = ["success", "success", "success", "success", "success"
 	
 var ctx = document.getElementById("canvas_img").getContext("2d");
 	
-var font_height = 40;
-var width;
-var height;
-const padding = 4;
 
+const padding = 4;
 const BUCKET_NAME = "memetics-motivation";
 
 var imageData;
@@ -217,6 +214,10 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 
 async function run_selection() {
 
+	var font_height = 40;
+	var width = 512;
+	var height = 512;
+	
 	// --------------------------------------
 	
 	document.getElementById("progress_bar").style.display = "block";
