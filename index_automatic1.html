@@ -902,6 +902,30 @@ async function obtain_selected_topic_index(selected_topic, file_array_rand) {
 		
 // -------------------------------------------------
 
+async function obtain_selected_topic_index1(selected_topic, file_array_rand) {
+
+	var selected_topic_index = [];
+	
+	for (var i=0; i<file_array_rand.length; i++) {
+		
+		// Split on the underscore
+		var char_array = file_array_rand.at(i).split('_');
+		console.log("char_array: ", char_array);
+		console.log("selected_topic: ", selected_topic);
+		
+		var bool = char_array.map((val, ind) => { return val == selected_topic ? true : ''; });
+		console.log("bool: ", bool);
+    
+		bool = Boolean(bool.filter((x) => x.length != 0).at(0));
+		console.log("bool: ", bool);
+    
+		if (bool == true) { selected_topic_index.push(file_array_rand.at(i)); }
+		
+	}
+	return selected_topic_index;
+}
+		
+// -------------------------------------------------
 
 	
 </script>
