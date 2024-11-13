@@ -885,15 +885,15 @@ async function obtain_selected_topic_index(selected_topic, file_array_rand) {
 		
 		// Split on the underscore
 		var char_array = file_array_rand.at(i).split('_');
-		// console.log("char_array: ", char_array);
+		console.log("char_array: ", char_array);
     
 		var bool = char_array.map((val, ind) => { return val == selected_topic ? true : ''; });
-		// console.log("bool: ", bool);
+		console.log("bool: ", bool);
     
-		bool = bool.filter((x) => x.length != 0);
-		// console.log("bool: ", bool);
-
-		if (bool == 'true') { selected_topic_index.push(i); }
+		bool = Boolean(bool.filter((x) => x.length != 0).at(0));
+		console.log("bool: ", bool);
+    
+		if (bool == true) { selected_topic_index.push(file_array_rand.at(i)); }
 		
 	}
 	return selected_topic_index;
