@@ -810,135 +810,106 @@ async function obtain_selected_topic_index(selected_topic, file_array_rand) {
 	}
 	return selected_topic_index;
 }
-		
-// -------------------------------------------------
 
-async function obtain_selected_topic_index1(selected_topic, file_array_rand) {
-
-	var selected_topic_index = [];
-	
-	for (var i=0; i<file_array_rand.length; i++) {
-		
-		// Split on the underscore
-		var char_array = file_array_rand.at(i).split('_');
-		console.log("char_array: ", char_array);
-		console.log("selected_topic: ", selected_topic);
-		
-		var bool = char_array.map((val, ind) => { return val == selected_topic ? true : ''; });
-		console.log("bool: ", bool);
-    
-		bool = Boolean(bool.filter((x) => x.length != 0).at(0));
-		console.log("bool: ", bool);
-    
-		if (bool == true) { selected_topic_index.push(file_array_rand.at(i)); }
-		
-	}
-	return selected_topic_index;
-}
-		
 // -------------------------------------------------
 
 async function database_only() {
 
 	width = 512;
 	height = 512;
-	
-	// --------------------------------------
-	
-	// Get randomly selected image and text prompts
-	const [image_prompt, text_prompt, selected_topic, neutral_selection] = await select_topic();
 
-	document.getElementById("progress_bar").value = (2/6)*100;
 
-	// ------------------------------
-	
-	// Fetch a list of the contents of the GCP Storage Bucket
-	var file_array = await List_bucket_contents();
-	// console.log("file_array: ", file_array);
+	await select_topic()
+		.then(async function(data) { 
 
-	document.getElementById("progress_bar").value = (3/6)*100;
+			var obj = {};
+			
+			// Get randomly selected image and text prompts
+			const [image_prompt, text_prompt, obj.selected_topic, obj.neutral_selection] = data;
+			
+			// Fetch a list of the contents of the GCP Storage Bucket
+			var file_array = await List_bucket_contents();
 
-	// ------------------------------
+			// Shuffle file_array directly.
+			obj.file_array_rand = await file_array.sort(() => Math.random() - 0.5);
 
-	// Shuffle file_array directly.
-	var file_array_rand = await file_array.sort(() => Math.random() - 0.5);
-	console.log("file_array_rand: ", file_array_rand);
+			console.log("obj: ", obj);
+			return obj;
+		})
+		.then(async function(obj) { 
+			// Find the index values for selected_topic and neutral_selection in the array.
+			obj.selected_topic_index = await obtain_selected_topic_index(selected_topic, file_array_rand);
+			
+			console.log("obj: ", obj);
+			return obj;
+		})
+		.then(async function(obj) { 
 
-	// ------------------------------
-	
-	// Find the index values for selected_topic and neutral_selection in the array.
-	var selected_topic_index = await obtain_selected_topic_index(selected_topic, file_array_rand);
-	console.log("selected_topic_index: ", selected_topic_index);
-
-	// ------------------------------
-
-	if (neutral_selection == "neutral") { 
-		var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
-			if ((/neutral/g).test(text_str) == true) {
-				return ind;
+			var neutralORnot_selection_index;
+			if (obj.neutral_selection == "neutral") { 
+				var neutralORnot_selection_index = obj.file_array_rand.map((text_str, ind) => { 
+					if ((/neutral/g).test(text_str) == true) {
+						return ind;
+					} else {
+						return '';
+					}
+				});
+				obj.neutralORnot_selection_index = await neutralORnot_selection_index.filter((x) => x.length != 0);
 			} else {
-				return '';
+				var neutralORnot_selection_index = obj.file_array_rand.map((text_str, ind) => { 
+					if ((/neutral/g).test(text_str) == false) {
+						return ind;
+					} else {
+						return '';
+					}
+				});
+				obj.neutralORnot_selection_index = await neutralORnot_selection_index.filter((x) => x.length != 0);
 			}
-		});
-	} else {
-		var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
-			if ((/neutral/g).test(text_str) == false) {
-				return ind;
-			} else {
-				return '';
+			
+			console.log("obj: ", obj);
+			return obj;
+		})
+		.then(async function(obj) { 
+
+			// Find the intersection of the arrays.
+			obj.intersection_result = [];
+			for (let i=0; i<obj.selected_topic_index.length; i++) {
+				for (let j=0; j<obj.neutralORnot_selection_index.length; j++) {
+					if (obj.selected_topic_index.at(i) == obj.neutralORnot_selection_index.at(j)) {
+						obj.intersection_result.push(obj.selected_topic_index.at(i));
+					}
+				}
 			}
-		});
-	}
-	neutralORnot_selection_index = await neutralORnot_selection_index.filter((x) => x.length != 0);
-	console.log("neutralORnot_selection_index: ", neutralORnot_selection_index);
+			console.log("obj: ", obj);
+			return obj;
+		})
+		.then(async function(obj) { 
+			
+			// Select a valid index value
+			obj.file_selection = await obj.intersection_result.at(Math.floor(Math.random()*obj.intersection_result.length));
 
-	// ------------------------------
-	
-	// Find the intersection of the arrays.
-	var result = [];
-	for (let i=0; i<selected_topic_index.length; i++) {
-		for (let j=0; j<neutralORnot_selection_index.length; j++) {
-			if (selected_topic_index.at(i) == neutralORnot_selection_index.at(j)) {
-				result.push(selected_topic_index.at(i));
-			}
-		}
-	}
-	console.log("result: ", result);
-	
-	// Select a valid index value
-	var file_selection = await result.at(Math.floor(Math.random()*result.length));
-	console.log("file_selection: ", file_selection);
+			console.log("obj: ", obj);
+			return obj;
+		})
+		.then(async function(obj) {
+			
+			obj.selected_image = await obj.file_array_rand.at(obj.file_selection);
 
-	// ------------------------------
-	
-	document.getElementById("progress_bar").value = (4/6)*100;
-	
-	const selected_image = await file_array.at(file_selection);
-	console.log("selected_image: ", selected_image);
-	
-	// ------------------------------
-	
-	// Obtain image size, and set canvas size
-	const selected_image_arr = await selected_image.split('_');
-	const image_size = await selected_image_arr.at(1);
-	await assign_width_height(image_size);
+			console.log("obj: ", obj);
+			return obj;
+		})
+		.then(async function(obj) { 
 
-	document.getElementById("progress_bar").value = (5/6)*100;
-
-	// ------------------------------
+			// Fetch the image from GCP Storage Bucket
+			const image_url = `https://storage.googleapis.com/memetics-motivation/${obj.selected_image}`;
+		
+			document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
+			
+			// Display output
+			imageData = await display_all('', image_url, 'image', 'without_text');
+		})
 	
-	// Fetch the image from GCP Storage Bucket
-	const image_url = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
-
-	document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
-
-	// ------------------------------
 	
-	// Display output
-	imageData = await display_all('', image_url, 'image', 'without_text');
-
-	// ------------------------------
-
 }
 
 // -------------------------------------------------
