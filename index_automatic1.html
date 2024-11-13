@@ -149,7 +149,7 @@ var imageData;
 // ------------------------------------------  
 async function processEvent_dropdown_options(event) {
 
-	console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
+	// console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
 		// Select an option
@@ -225,10 +225,6 @@ async function run_selection() {
 	
 	// Get randomly selected image and text prompts
 	const [image_prompt, text_prompt, selected_topic, neutral_selection] = await select_motivation_topic();
-	console.log("image_prompt: ", image_prompt);
-	console.log("text_prompt: ", text_prompt);
-	console.log("selected_topic: ", selected_topic);
-	console.log("neutral_selection: ", neutral_selection);
 
 	// --------------------------------------
 
@@ -245,7 +241,7 @@ async function run_selection() {
 		// ------------------------------
 		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, image_prompt);
-		console.log("image_url: ", image_url);
+		// console.log("image_url: ", image_url);
 
 		document.getElementById("progress_bar").value = (3/6)*100;
 
@@ -253,7 +249,6 @@ async function run_selection() {
 		
 		// Generate automated message for the image
 		const generated_text = await create_text_call_API_OpenAI(text_prompt);
-		console.log("generated_text: ", generated_text);
 
 		document.getElementById("progress_bar").value = (4/6)*100;
 
@@ -281,7 +276,6 @@ async function run_selection() {
 		// ------------------------------
 		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, image_prompt);
-		console.log("image_url: ", image_url);
 
 		document.getElementById("progress_bar").value = (3/6)*100;
 
@@ -289,7 +283,6 @@ async function run_selection() {
 		
 		// Generate automated message for the image
 		const generated_text = await create_text_call_API_OpenAI(text_prompt);
-		console.log("generated_text: ", generated_text);
 
 		document.getElementById("progress_bar").value = (4/6)*100;
 
@@ -303,7 +296,7 @@ async function run_selection() {
 		
 		// Display image
 		imageData = await display_all(generated_text_array, image_url, 'image', 'with_text');
-		console.log('imageData: ', imageData);
+		// console.log('imageData: ', imageData);
 		
 	} else if (dropdown_option_type == 'google_imagen') {
 
@@ -328,11 +321,11 @@ async function run_selection() {
 
 		// Obtain relevant sentences of text
 		var all_generated_text = generated_text.split(':').at(1);
-		console.log("all_generated_text: ", all_generated_text);
+		// console.log("all_generated_text: ", all_generated_text);
 
 		// Obtain an array of motivational sentences
 		var motivational_sentences = all_generated_text.split('.');
-		console.log("motivational_sentences: ", motivational_sentences);
+		// console.log("motivational_sentences: ", motivational_sentences);
 
 		// ------------------------------
 		
@@ -340,14 +333,14 @@ async function run_selection() {
 		motivational_sentences = motivational_sentences.map((val, ind) => { return `"${val.replace(/^\s+/g, "")}"`; });
 		const NonEmptyVals_toKeep = (x) => x.length != 0;
 		motivational_sentences = motivational_sentences.filter(NonEmptyVals_toKeep);
-		console.log("motivational_sentences: ", motivational_sentences);
+		// console.log("motivational_sentences: ", motivational_sentences);
 
 		// ------------------------------
 		
 		// The model gives too many phrases: so obtain only one of the phrases
 		var final_selection = Math.floor(Math.random() * motivational_sentences.length);
 		generated_text = motivational_sentences.at(final_selection);
-		console.log("generated_text: ", generated_text);
+		// console.log("generated_text: ", generated_text);
 
 		// ------------------------------
 		
@@ -360,7 +353,7 @@ async function run_selection() {
 		// Display output
 		var option_image = ['solid', 'gradient'].at(Math.floor(Math.random()*2));
 		imageData = await display_all(generated_text_array, '', option_image, 'with_text');
-		console.log('imageData: ', imageData);
+		// console.log('imageData: ', imageData);
 		
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
@@ -371,20 +364,15 @@ async function run_selection() {
 		
 		// Fetch a list of the contents of the GCP Storage Bucket
 		var file_array = await List_bucket_contents();
-		console.log("file_array: ", file_array);
+		// console.log("file_array: ", file_array);
 
 		document.getElementById("progress_bar").value = (3/6)*100;
 
 		// ------------------------------
 
-		// Shuffle an index the length of file_array.
-		// var rand_ind = Array.from({ length: file_array.length }, (val, ind) => { return ind; }).sort(() => Math.random() - 0.5);
-		// Shuffle file_array with the shuffled index.
-		// var file_array_rand = rand_ind.map((val, ind) => { return file_array.at(val); });
-		// OR
 		// Shuffle file_array directly.
 		var file_array_rand = file_array.sort(() => Math.random() - 0.5);
-		console.log("file_array_rand: ", file_array_rand);
+		// console.log("file_array_rand: ", file_array_rand);
 
 		// ------------------------------
 		
@@ -403,7 +391,7 @@ async function run_selection() {
 		// ------------------------------
 
 		if (neutral_selection == "neutral") { 
-			var neutral_selection_index = file_array_rand.map((text_str, ind) => { 
+			var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
 				if ((/neutral/g).test(text_str) == true) {
 					return ind;
 				} else {
@@ -411,7 +399,7 @@ async function run_selection() {
 				}
 			});
 		} else {
-			var neutral_selection_index = file_array_rand.map((text_str, ind) => { 
+			var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
 				if ((/neutral/g).test(text_str) == false) {
 					return ind;
 				} else {
@@ -419,34 +407,25 @@ async function run_selection() {
 				}
 			});
 		}
-		neutral_selection_index = neutral_selection_index.filter((x) => x.length != 0);
-		console.log("neutral_selection_index: ", neutral_selection_index);
+		neutralORnot_selection_index = neutralORnot_selection_index.filter((x) => x.length != 0);
+		console.log("neutralORnot_selection_index: ", neutralORnot_selection_index);
 
 		// ------------------------------
 		
 		// Find the intersection of the arrays.
 		var result = [];
 		for (let i=0; i<selected_topic_index.length; i++) {
-			for (let j=0; j<neutral_selection_index.length; j++) {
-				if (selected_topic_index.at(i) == neutral_selection_index.at(j)) {
+			for (let j=0; j<neutralORnot_selection_index.length; j++) {
+				if (selected_topic_index.at(i) == neutralORnot_selection_index.at(j)) {
 					result.push(selected_topic_index.at(i));
 				}
 			}
 		}
 		console.log("result: ", result);
 		
-		// result = result.filter((x) => x.length != 0);
-		console.log("result: ", result);
-		
 		// Select a valid index value
 		var file_selection = result.at(Math.floor(Math.random()*result.length));
 		console.log("file_selection: ", file_selection);
-    
-		// OR
-		
-		// Randomly select a file from the database
-		// const file_selection = Math.floor(Math.random()*file_array.length);
-		// console.log("file_selection: ", file_selection);
 
 		// ------------------------------
 		
@@ -475,7 +454,7 @@ async function run_selection() {
 		
 		// Display output
 		imageData = await display_all('', image_url, 'image', 'without_text');
-		console.log('imageData: ', imageData);
+		// console.log('imageData: ', imageData);
 
 		// ------------------------------
 		
@@ -689,12 +668,12 @@ async function gradient() {
 	// Corrected num_of_squares so value is from 1 to max_val
 	// if num_of_squares_initial>1, then output num_of_squares_initial else output 2
 	const num_of_squares = num_of_squares_initial>1 ? num_of_squares_initial : 2;
-	console.log("num_of_squares: ", num_of_squares);
+	// console.log("num_of_squares: ", num_of_squares);
 	
 	// ----------------------
 	
 	const val = width/num_of_squares;
-	console.log("val: ", val);
+	// console.log("val: ", val);
 
 	// ----------------------
 
