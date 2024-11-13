@@ -355,96 +355,7 @@ async function run_selection() {
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
 
-		document.getElementById("progress_bar").value = (2/6)*100;
-
-		// ------------------------------
-		
-		// Fetch a list of the contents of the GCP Storage Bucket
-		var file_array = await List_bucket_contents();
-		// console.log("file_array: ", file_array);
-
-		document.getElementById("progress_bar").value = (3/6)*100;
-
-		// ------------------------------
-
-		// Shuffle file_array directly.
-		var file_array_rand = await file_array.sort(() => Math.random() - 0.5);
-		console.log("file_array_rand: ", file_array_rand);
-
-		// ------------------------------
-		
-		// Find the index values for selected_topic and neutral_selection in the array.
-		var selected_topic_index = await obtain_selected_topic_index(selected_topic, file_array_rand);
-		console.log("selected_topic_index: ", selected_topic_index);
-
-		// ------------------------------
-
-		if (neutral_selection == "neutral") { 
-			var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
-				if ((/neutral/g).test(text_str) == true) {
-					return ind;
-				} else {
-					return '';
-				}
-			});
-		} else {
-			var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
-				if ((/neutral/g).test(text_str) == false) {
-					return ind;
-				} else {
-					return '';
-				}
-			});
-		}
-		neutralORnot_selection_index = await neutralORnot_selection_index.filter((x) => x.length != 0);
-		console.log("neutralORnot_selection_index: ", neutralORnot_selection_index);
-
-		// ------------------------------
-		
-		// Find the intersection of the arrays.
-		var result = [];
-		for (let i=0; i<selected_topic_index.length; i++) {
-			for (let j=0; j<neutralORnot_selection_index.length; j++) {
-				if (selected_topic_index.at(i) == neutralORnot_selection_index.at(j)) {
-					result.push(selected_topic_index.at(i));
-				}
-			}
-		}
-		console.log("result: ", result);
-		
-		// Select a valid index value
-		var file_selection = await result.at(Math.floor(Math.random()*result.length));
-		console.log("file_selection: ", file_selection);
-
-		// ------------------------------
-		
-		document.getElementById("progress_bar").value = (4/6)*100;
-		
-		const selected_image = await file_array.at(file_selection);
-		console.log("selected_image: ", selected_image);
-		
-		// ------------------------------
-		
-		// Obtain image size, and set canvas size
-		const selected_image_arr = await selected_image.split('_');
-		const image_size = await selected_image_arr.at(1);
-		await assign_width_height(image_size);
-
-		document.getElementById("progress_bar").value = (5/6)*100;
-
-		// ------------------------------
-		
-		// Fetch the image from GCP Storage Bucket
-		const image_url = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
-
-		document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
-
-		// ------------------------------
-		
-		// Display output
-		imageData = await display_all('', image_url, 'image', 'without_text');
-
-		// ------------------------------
+		await database_only();
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
@@ -927,6 +838,110 @@ async function obtain_selected_topic_index1(selected_topic, file_array_rand) {
 		
 // -------------------------------------------------
 
+async function database_only() {
+
+	width = 512;
+	height = 512;
+	
+	// --------------------------------------
+	
+	// Get randomly selected image and text prompts
+	const [image_prompt, text_prompt, selected_topic, neutral_selection] = await select_topic();
+
+	document.getElementById("progress_bar").value = (2/6)*100;
+
+	// ------------------------------
+	
+	// Fetch a list of the contents of the GCP Storage Bucket
+	var file_array = await List_bucket_contents();
+	// console.log("file_array: ", file_array);
+
+	document.getElementById("progress_bar").value = (3/6)*100;
+
+	// ------------------------------
+
+	// Shuffle file_array directly.
+	var file_array_rand = await file_array.sort(() => Math.random() - 0.5);
+	console.log("file_array_rand: ", file_array_rand);
+
+	// ------------------------------
+	
+	// Find the index values for selected_topic and neutral_selection in the array.
+	var selected_topic_index = await obtain_selected_topic_index(selected_topic, file_array_rand);
+	console.log("selected_topic_index: ", selected_topic_index);
+
+	// ------------------------------
+
+	if (neutral_selection == "neutral") { 
+		var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
+			if ((/neutral/g).test(text_str) == true) {
+				return ind;
+			} else {
+				return '';
+			}
+		});
+	} else {
+		var neutralORnot_selection_index = file_array_rand.map((text_str, ind) => { 
+			if ((/neutral/g).test(text_str) == false) {
+				return ind;
+			} else {
+				return '';
+			}
+		});
+	}
+	neutralORnot_selection_index = await neutralORnot_selection_index.filter((x) => x.length != 0);
+	console.log("neutralORnot_selection_index: ", neutralORnot_selection_index);
+
+	// ------------------------------
+	
+	// Find the intersection of the arrays.
+	var result = [];
+	for (let i=0; i<selected_topic_index.length; i++) {
+		for (let j=0; j<neutralORnot_selection_index.length; j++) {
+			if (selected_topic_index.at(i) == neutralORnot_selection_index.at(j)) {
+				result.push(selected_topic_index.at(i));
+			}
+		}
+	}
+	console.log("result: ", result);
+	
+	// Select a valid index value
+	var file_selection = await result.at(Math.floor(Math.random()*result.length));
+	console.log("file_selection: ", file_selection);
+
+	// ------------------------------
+	
+	document.getElementById("progress_bar").value = (4/6)*100;
+	
+	const selected_image = await file_array.at(file_selection);
+	console.log("selected_image: ", selected_image);
+	
+	// ------------------------------
+	
+	// Obtain image size, and set canvas size
+	const selected_image_arr = await selected_image.split('_');
+	const image_size = await selected_image_arr.at(1);
+	await assign_width_height(image_size);
+
+	document.getElementById("progress_bar").value = (5/6)*100;
+
+	// ------------------------------
+	
+	// Fetch the image from GCP Storage Bucket
+	const image_url = `https://storage.googleapis.com/${BUCKET_NAME}/${selected_image}`;
+
+	document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
+
+	// ------------------------------
+	
+	// Display output
+	imageData = await display_all('', image_url, 'image', 'without_text');
+
+	// ------------------------------
+
+}
+
+// -------------------------------------------------
 	
 </script>
 </body>
