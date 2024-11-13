@@ -377,16 +377,21 @@ async function run_selection() {
 		// var regex = new RegExp(`${selected_topic}`, 'g');
 		// var selected_topic_index = await obtain_selected_topic_index(regex, file_array_rand);
 		// OR
-		var selected_topic_index = await file_array_rand.map((val, ind) => {
+		// var selected_topic_index = await file_array_rand.map((val, ind) => {
 			// return regex.test(val) == true ? ind : '';
 			// OR
 			// Split the string into characters
 			// var char_array_val = val.split('');
 			// var char_array_selected_topic = selected_topic.split('');
+			// char_array_selected_topic.map((v, i) => { })
 			// OR
-			return [val].find((val) => val == selected_topic) == undefined ? '' : ind;
-		});
-		selected_topic_index = await selected_topic_index.filter((x) => x.length != 0);
+		// 	console.log('val: ', val);
+		// 	console.log('out: ', [val].find((val) => val == selected_topic));
+		// 	return [val].find((val) => val == selected_topic) == undefined ? '' : ind;
+		// });
+		// selected_topic_index = await selected_topic_index.filter((x) => x.length != 0);
+		// OR
+		var selected_topic_index = await obtain_selected_topic_index(file_array_rand);
 		
 		console.log("selected_topic_index: ", selected_topic_index);
 
@@ -890,9 +895,9 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 
 // -------------------------------------------------
 
-async function obtain_selected_topic_index(regex, file_array_rand) {
+async function obtain_selected_topic_index(selected_topic, file_array_rand) {
 
-	// var selected_topic_index = [];
+	var selected_topic_index = [];
 	// for (let i=0; i<file_array_rand.length; i++) {
 	// 	var bool_val = regex.test(file_array_rand.at(i));
 	// 	console.log("bool_val: ", bool_val);
@@ -904,11 +909,50 @@ async function obtain_selected_topic_index(regex, file_array_rand) {
 
 	// OR
 	
-	var selected_topic_index = file_array_rand.map((val, ind) => {
-		return regex.test(val) == true ? ind : '';
-	});
+	// var selected_topic_index = file_array_rand.map((val, ind) => {
+	// 	return regex.test(val) == true ? ind : '';
+	// });
 
-	return selected_topic_index.filter((x) => x.length != 0);
+	// return selected_topic_index.filter((x) => x.length != 0);
+
+	// OR
+	
+	var char_array_selected_topic = selected_topic.split('');
+	
+	for (var i=0; i<file_array_rand.length; i++) {
+		
+		// Split the string into characters
+		var char_array = file_array_rand.at(i).split('');
+
+		var c = 0;
+		var temp = [];
+		var j_prev = -1;
+		
+		for (let j=0; j<char_array.length; j++) {
+			
+			
+			if (char_array.at(j) == char_array_selected_topic.at(c) && j_prev==(j-1)) {
+				temp.push(char_array.at(j));
+				c = c + 1;
+			}
+			j_prev = j + 1;
+
+			console.log("j: ", j);
+			console.log("j_prev: ", j_prev);
+		}
+
+		// OR
+		
+		// var bool_val = [].find((val) => val == selected_topic) == undefined ? '' : i;
+		// console.log("bool_val: ", bool_val);
+		
+		// if (bool_val == true) { 
+		// 	selected_topic_index.push(i);
+		// 	console.log("file_array_rand.at(i): ", file_array_rand.at(i));
+		// }
+	}
+
+	
 }
 		
 // -------------------------------------------------
