@@ -917,30 +917,32 @@ async function obtain_selected_topic_index(selected_topic, file_array_rand) {
 
 	// OR
 	
-	var char_array_selected_topic = selected_topic.split('');
+	var char_array_selected_topic = await selected_topic.split('');
 	
 	for (var i=0; i<file_array_rand.length; i++) {
 		
 		// Split the string into characters
 		var char_array = file_array_rand.at(i).split('');
-
-		var c = 0;
-		var temp = [];
-		var j_prev = -1;
 		
+		var temp = [];
 		for (let j=0; j<char_array.length; j++) {
-			
-			
-			if (char_array.at(j) == char_array_selected_topic.at(c) && j_prev==(j-1)) {
+			if (char_array.at(j).toLowerCase() == char_array_selected_topic.at(c).toLowerCase()) {
 				temp.push(char_array.at(j));
-				c = c + 1;
 			}
-			j_prev = j + 1;
-
-			console.log("j: ", j);
-			console.log("j_prev: ", j_prev);
 		}
+		temp = temp.join('');
+		console.log("temp: ", temp);
 
+		if (temp == selected_topic) { selected_topic_index.push(file_array_rand.at(i)); }
+
+		// OR
+
+		// Split on the underscore
+		// var char_array = file_array_rand.at(i).split('_');
+		// var bool = char_array.map((val, ind) => { return val == selected_topic ? true : ''; });
+		// bool = bool.filter((x) => x.length != 0);
+		// if (bool != undefined) { selected_topic_index.push(file_array_rand.at(i)); }
+		
 		// OR
 		
 		// var bool_val = [].find((val) => val == selected_topic) == undefined ? '' : i;
@@ -951,8 +953,7 @@ async function obtain_selected_topic_index(selected_topic, file_array_rand) {
 		// 	console.log("file_array_rand.at(i): ", file_array_rand.at(i));
 		// }
 	}
-
-	
+	return selected_topic_index;
 }
 		
 // -------------------------------------------------
