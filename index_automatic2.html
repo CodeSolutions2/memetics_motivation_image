@@ -141,7 +141,7 @@ const padding = 4;
 
 var imageData;
 
-var obj = { BUCKET_NAME: "memetics-motivation", width: 512, height: 512 };
+var obj = { BUCKET_NAME: "memetics-motivation", width: document.getElementById("canvas_img").width, height: document.getElementById("canvas_img").height };
 
 // ------------------------------------------
 // UI
@@ -841,7 +841,7 @@ async function database_only() {
 			// OR
 			
 			obj.selected_topic_index = obj.file_array_rand.map((val, ind) => {
-				return obj.file_array_rand.at(i).split('_').at(0) == obj.selected_topic ? ind : ''; 
+				return obj.file_array_rand.at(ind).split('_').at(0) == obj.selected_topic ? ind : ''; 
 			}).filter((x) => x.length != 0);
 
 			// RESULT: incorrect, it should give the index
