@@ -818,8 +818,6 @@ async function database_retrieval() {
 					}
 				}).filter((x) => x.length != 0);
 			}
-			
-			// console.log("here2 obj: ", obj);
 
 			document.getElementById("progress_bar").value = (3/6)*100;
 			
@@ -829,8 +827,6 @@ async function database_retrieval() {
 
 			// Find the intersection of the arrays.
 			obj.intersection_result = obj.selected_topic_index.filter(val => obj.neutralORnot_selection_index.includes(val));
-			
-			// console.log("here3 obj: ", obj);
 
 			document.getElementById("progress_bar").value = (3.5/6)*100;
 			
@@ -841,8 +837,6 @@ async function database_retrieval() {
 			// Select a valid index value
 			obj.file_selection = await obj.intersection_result.at(Math.floor(Math.random()*obj.intersection_result.length));
 
-			// console.log("here4 obj: ", obj);
-
 			document.getElementById("progress_bar").value = (4/6)*100;
 			
 			return obj;
@@ -851,7 +845,7 @@ async function database_retrieval() {
 			
 			obj.selected_image = await obj.file_array_rand.at(obj.file_selection);
 
-			// console.log("here5 obj: ", obj);
+			// console.log("obj: ", obj);
 
 			document.getElementById("progress_bar").value = (5/6)*100;
 			
