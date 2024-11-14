@@ -140,11 +140,10 @@ var width;
 var height;
 
 const padding = 4;
-const BUCKET_NAME = "memetics-motivation";
 
 var imageData;
 
-var obj = {};
+var obj = {BUCKET_NAME: "memetics-motivation"};
 
 // ------------------------------------------
 // UI
@@ -763,7 +762,7 @@ async function preprocess_text(generated_text) {
 async function List_bucket_contents() {
 	
 	// List contents of the bucket
-	var url = `https://storage.googleapis.com/storage/v1/b/${BUCKET_NAME}/o`
+	var url = `https://storage.googleapis.com/storage/v1/b/${obj.BUCKET_NAME}/o`
 	
 	return await fetch_on_cloud_storage_return_contents_list(url)
 			.then(async function(xmlDocument) {
@@ -901,7 +900,7 @@ async function database_only() {
 		.then(async function(obj) { 
 
 			// Fetch the image from GCP Storage Bucket
-			const image_url = `https://storage.googleapis.com/memetics-motivation/${obj.selected_image}`;
+			const image_url = `https://storage.googleapis.com/${obj.BUCKET_NAME}/${obj.selected_image}`;
 		
 			// document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
 			
