@@ -405,8 +405,8 @@ async function create_image_call_API_OpenAI(model_name, image_size, image_prompt
 async function generate_topic_and_neutralORnot() {
 	
 	// Generate one random number from [0 to array_length]
-	obj.selected_topic = obj.motivation_topics.at(Math.floor(Math.random()*obj.motivation_topics.length));
-	obj.neutral_selection = obj.neutralORnot.at(Math.floor(Math.random()*obj.neutralORnot.length));
+	obj.selected_topic = motivation_topics.at(Math.floor(Math.random()*motivation_topics.length));
+	obj.neutral_selection = neutralORnot.at(Math.floor(Math.random()*neutralORnot.length));
 
 	return obj;
 }
