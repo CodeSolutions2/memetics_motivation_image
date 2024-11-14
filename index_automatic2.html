@@ -299,44 +299,38 @@ async function run_selection() {
 		// ------------------------------
 		
 		// Generate automated message for the image
-		var generated_text = await create_text_call_API_Gemini(text_prompt);
+		const generated_text = await create_text_call_API_Gemini(text_prompt);
 
 		document.getElementById("progress_bar").value = (4/6)*100;
 
 		// ------------------------------
 
 		// Obtain relevant sentences of text
-		var all_generated_text = generated_text.split(':').at(1);
+		const all_generated_text = await generated_text.split(':').at(1);
 		// console.log("all_generated_text: ", all_generated_text);
 
-		// Obtain an array of motivational sentences
-		var motivational_sentences = all_generated_text.split('.');
-		// console.log("motivational_sentences: ", motivational_sentences);
-
-		// ------------------------------
-		
-		// Remove spaces from the begining of text in array
-		motivational_sentences = motivational_sentences.map((val, ind) => { return `"${val.replace(/^\s+/g, "")}"`; });
-		const NonEmptyVals_toKeep = (x) => x.length != 0;
-		motivational_sentences = motivational_sentences.filter(NonEmptyVals_toKeep);
+		// Obtain an array of motivational sentences by splitting on dot
+		// Remove spaces from the begining of text in the array
+		// Remove empty array elements
+		const motivational_sentences = await all_generated_text.split('.').map((val, ind) => { return `"${val.replace(/^\s+/g, "")}"`; }).filter((x) => x.length != 0);
 		// console.log("motivational_sentences: ", motivational_sentences);
 
 		// ------------------------------
 		
 		// The model gives too many phrases: so obtain only one of the phrases
-		var final_selection = Math.floor(Math.random() * motivational_sentences.length);
-		generated_text = motivational_sentences.at(final_selection);
+		const final_selection = await Math.floor(Math.random() * motivational_sentences.length);
 
 		// ------------------------------
 		
-		const generated_text_array = await preprocess_text(generated_text);
+		const generated_text_array = await preprocess_text(motivational_sentences.at(final_selection));
 
 		document.getElementById("progress_bar").value = (5/6)*100;
 
 		// ------------------------------
 	
 		// Display output
-		var option_image = ['solid', 'gradient'].at(Math.floor(Math.random()*2));
+		const option_image = await ['solid', 'gradient'].at(Math.floor(Math.random()*2));
+		
 		await display_all(generated_text_array, '', option_image, 'with_text');
 		
     
