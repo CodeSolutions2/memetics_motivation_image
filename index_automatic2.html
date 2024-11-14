@@ -67,7 +67,7 @@
 
 <!-- View results -->
 <td id="display_area">
-<div style="width:100%;height:100%;position:absolute;vertical-align:middle;text-align:left;"><canvas id="canvas_img" width="224" height="224" style="display:none"></canvas><div>
+<div style="width:100%;height:100%;position:absolute;vertical-align:middle;text-align:left;"><canvas id="canvas_img" width="512" height="512" style="display:none"></canvas><div>
 <div id="notification" style="font-family:courier;font-size:15px;"></div>
 <div id="error" style="font-family:courier;font-size:15px;"></div
 
@@ -136,14 +136,12 @@ const motivation_topics = ["health", "education", "lifebalance", "happiness", "s
 var ctx = document.getElementById("canvas_img").getContext("2d");
 
 var font_height = 40;
-var width;
-var height;
 
 const padding = 4;
 
 var imageData;
 
-var obj = {BUCKET_NAME: "memetics-motivation"};
+var obj = { BUCKET_NAME: "memetics-motivation", width: 512, height: 512 };
 
 // ------------------------------------------
 // UI
@@ -213,11 +211,6 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 
 async function run_selection() {
 	
-	width = 512;
-	height = 512;
-	
-	// --------------------------------------
-	
 	document.getElementById("progress_bar").style.display = "block";
 	
 	var dropdown_option_type = document.getElementById("dropdown_options").value;
@@ -240,7 +233,6 @@ async function run_selection() {
 		// ------------------------------
 		
 		const image_url = await create_image_call_API_OpenAI(model_name, image_size, image_prompt);
-		// console.log("image_url: ", image_url);
 
 		document.getElementById("progress_bar").value = (3/6)*100;
 
@@ -310,7 +302,6 @@ async function run_selection() {
 		
 		// Generate automated message for the image
 		var generated_text = await create_text_call_API_Gemini(text_prompt);
-		// console.log("generated_text: ", generated_text);
 
 		document.getElementById("progress_bar").value = (4/6)*100;
 
@@ -371,13 +362,11 @@ async function run_selection() {
 // ------------------------------------------
 async function assign_width_height(image_size) {
 
-	width = await Number(image_size.split('x').pop());
-	console.log('width: ', width);
-	document.getElementById("canvas_img").width = width; // Resize the canvas that is originally set to 224
+	obj.width = await Number(image_size.split('x').pop());
+	document.getElementById("canvas_img").width = obj.width;
 
-	height = await Number(image_size.split('x').shift());
-	console.log('height: ', height);
-	document.getElementById("canvas_img").height = height;	// Resize the canvas that is originally set to 224
+	obj.height = await Number(image_size.split('x').shift());
+	document.getElementById("canvas_img").height = obj.height;
 }
 
 // ------------------------------------------
@@ -496,7 +485,7 @@ function put_overlay_on_top_of_base_image() {
 	
 	// Put overlay on top of image to make font more readable and image to look more professional
 	ctx.fillStyle = "rgb(153 153 153 / 40%)";  // Background square over image = grey
-	ctx.fillRect(0, 0, width, height);  // fillRect(x, y, width, height)
+	ctx.fillRect(0, 0, obj.width, obj.height);  // fillRect(x, y, width, height)
 	
 }
 	
@@ -520,12 +509,12 @@ function write_text(option_text, generated_text_array) {
 			// Write text that is filled in
 			ctx.fillStyle = "rgb("+RGB_contrast[0]+" "+RGB_contrast[1]+" "+RGB_contrast[2]+")";
 			ctx.lineWidth = 1;
-			ctx.fillText(phrase, x, y, width);
+			ctx.fillText(phrase, x, y, obj.width);
 
 			// Re-write text outline only, to make text contrasting on the image
 			ctx.strokeStyle = "rgb("+RGB_opposite_contrast[0]+" "+RGB_opposite_contrast[1]+" "+RGB_opposite_contrast[2]+")";
 			ctx.lineWidth = 1;
-			ctx.strokeText(phrase, x, y, width);
+			ctx.strokeText(phrase, x, y, obj.width);
 			
 			y = y + Number(font_height) + padding;
 		});
@@ -553,7 +542,7 @@ async function solid() {
 	// ----------------------
 	
 	ctx.fillStyle = `rgb(${r} ${g} ${b} / ${alpha}%)`;
-	ctx.fillRect(0, 0, width, height);
+	ctx.fillRect(0, 0, obj.width, obj.height);
 }
 
 // -----------------------------------------------
@@ -575,7 +564,7 @@ async function gradient() {
 	
 	// ----------------------
 	
-	const val = width/num_of_squares;
+	const val = obj.width/num_of_squares;
 	// console.log("val: ", val);
 
 	// ----------------------
@@ -714,7 +703,7 @@ async function preprocess_text(generated_text) {
 	// ------------------------------
 	
 	// Could adjust this by the length of the generated sentence
-	if (width == 256) { font_height = 20; }
+	if (obj.width == 256) { font_height = 20; }
 	console.log("font_height: ", font_height);
 
 	// ------------------------------
@@ -725,7 +714,7 @@ async function preprocess_text(generated_text) {
 	const char_width = font_height*aspect_ratio;
 	console.log("char_width: ", char_width);
 	
-	const max_num_of_char_per_line = await Math.floor(width/char_width);
+	const max_num_of_char_per_line = await Math.floor(obj.width/char_width);
 	console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
 
 	// ------------------------------
@@ -790,9 +779,6 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 // -------------------------------------------------
 
 async function database_only() {
-
-	obj.width = 512;
-	obj.height = 512;
 
 	await generate_topic_and_neutralORnot()
 		.then(async function(obj) { 
