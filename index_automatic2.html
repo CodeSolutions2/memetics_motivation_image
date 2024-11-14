@@ -149,8 +149,6 @@ var obj = {BUCKET_NAME: "memetics-motivation"};
 // UI
 // ------------------------------------------  
 async function processEvent_dropdown_options(event) {
-
-	// console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
 		// Select an option
@@ -435,7 +433,7 @@ async function select_topic() {
 
 		return [image_prompt, text_prompt];
 	} else {
-		const image_prompt = `Create an image about ${obj.selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}. In addition today's date is ${cur_date}, if there is a major holiday within the next 10 days, use themes from the upcoming holiday to create the image.`;
+		const image_prompt = `Create an image about ${obj.selected_topic} such that one would be motivated to obtain more of the topic of ${obj.selected_topic}. In addition today's date is ${cur_date}, if there is a major holiday within the next 10 days, use themes from the upcoming holiday to create the image.`;
 	
 		const text_prompt = `Write a motivational statement to encourage ${obj.selected_topic}. Be creative and give varying responses, limit the response to 25 words or less.`;
 
@@ -794,24 +792,24 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 
 // -------------------------------------------------
 
-async function obtain_selected_topic_index(selected_topic, file_array_rand) {
+async function obtain_selected_topic_index() {
 
 	var selected_topic_index = [];
 	
-	for (var i=0; i<file_array_rand.length; i++) {
+	for (var i=0; i<obj.file_array_rand.length; i++) {
 		
 		// Split on the underscore
-		var char_array = file_array_rand.at(i).split('_');
+		var char_array = await obj.file_array_rand.at(i).split('_');
 		console.log("char_array: ", char_array);
-		console.log("selected_topic: ", selected_topic);
+		console.log("selected_topic: ", obj.selected_topic);
 		
-		var bool = char_array.map((val, ind) => { return val == selected_topic ? true : ''; });
+		var bool = await char_array.map((val, ind) => { return val == obj.selected_topic ? true : ''; });
 		console.log("bool: ", bool);
     
-		bool = Boolean(bool.filter((x) => x.length != 0).at(0));
+		bool = await Boolean(bool.filter((x) => x.length != 0).at(0));
 		console.log("bool: ", bool);
     
-		if (bool == true) { selected_topic_index.push(file_array_rand.at(i)); }
+		if (bool == true) { selected_topic_index.push(obj.file_array_rand.at(i)); }
 		
 	}
 	return selected_topic_index;
@@ -838,7 +836,7 @@ async function database_only() {
 		})
 		.then(async function(obj) { 
 			// Find the index values for selected_topic and neutral_selection in the array.
-			obj.selected_topic_index = await obtain_selected_topic_index(selected_topic, file_array_rand);
+			obj.selected_topic_index = await obtain_selected_topic_index();
 			
 			console.log("here1 obj: ", obj);
 			return obj;
