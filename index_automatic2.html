@@ -260,7 +260,7 @@ async function run_selection() {
 		// ------------------------------
 		
 		// Display image
-		imageData = await display_all(generated_text_array, image_url, 'image', 'with_text');
+		await display_all(generated_text_array, image_url, 'image', 'with_text');
 
 		
 	} else if (dropdown_option_type == 'openai_dalle3') {
@@ -293,7 +293,7 @@ async function run_selection() {
 		// ------------------------------
 		
 		// Display image
-		imageData = await display_all(generated_text_array, image_url, 'image', 'with_text');
+		await display_all(generated_text_array, image_url, 'image', 'with_text');
 		
 	} else if (dropdown_option_type == 'google_imagen') {
 
@@ -349,7 +349,7 @@ async function run_selection() {
 	
 		// Display output
 		var option_image = ['solid', 'gradient'].at(Math.floor(Math.random()*2));
-		imageData = await display_all(generated_text_array, '', option_image, 'with_text');
+		await display_all(generated_text_array, '', option_image, 'with_text');
 		
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
@@ -488,9 +488,6 @@ async function display_all(generated_text_array, image_url, option_image, option
 	// Remove progress bar after processing
 	document.getElementById("progress_bar").style.display = "none";
 	
-	// ------------------------------
-	
-	return await ctx.getImageData(0, 0, width, height);
 }
 
 // -----------------------------------------------
@@ -792,31 +789,6 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 
 // -------------------------------------------------
 
-async function obtain_selected_topic_index() {
-
-	var selected_topic_index = [];
-	
-	for (var i=0; i<obj.file_array_rand.length; i++) {
-		
-		// Split on the underscore
-		var char_array = await obj.file_array_rand.at(i).split('_');
-		console.log("char_array: ", char_array);
-		console.log("selected_topic: ", obj.selected_topic);
-		
-		var bool = await char_array.map((val, ind) => { return val == obj.selected_topic ? true : ''; });
-		console.log("bool: ", bool);
-    
-		bool = await Boolean(bool.filter((x) => x.length != 0).at(0));
-		console.log("bool: ", bool);
-    
-		if (bool == true) { selected_topic_index.push(obj.file_array_rand.at(i)); }
-		
-	}
-	return selected_topic_index;
-}
-
-// -------------------------------------------------
-
 async function database_only() {
 
 	obj.width = 512;
@@ -824,6 +796,10 @@ async function database_only() {
 
 	await generate_topic_and_neutralORnot()
 		.then(async function(obj) { 
+
+			// OUTPUTS:
+			// neutral_selection: "neutral"
+			// selected_topic: "education"
 			
 			// Fetch a list of the contents of the GCP Storage Bucket
 			const file_array = await List_bucket_contents();
@@ -832,11 +808,58 @@ async function database_only() {
 			obj.file_array_rand = await file_array.sort(() => Math.random() - 0.5);
 
 			console.log("here0 obj: ", obj);
+
+			// Items that it should have at this point
+			// BUCKET_NAME: "memetics-motivation"
+			// file_array_rand: Array(24) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png", … ]
+			// height: 512
+			// neutral_selection: "neutral"
+			// selected_topic: "education"
+			// width: 512
+			
+			
+			// Items that it has, but should not have because they are executed in the future
+			// file_selection: undefined
+			// intersection_result: Array []
+			// neutralORnot_selection_index: Array(7) [ 2, 4, 8, … ]
+			// selected_image: "education_512x512_0.png"
+			// selected_topic_index: Array(3) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png" ]
+			
 			return obj;
 		})
 		.then(async function(obj) { 
+
+			// OUTPUTS THAT IT SHOULD HAVE:
+			// BUCKET_NAME: "memetics-motivation"
+			// file_array_rand: Array(24) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png", … ]
+			// height: 512
+			// neutral_selection: "neutral"
+			// selected_topic: "education"
+			// width: 512
+			
 			// Find the index values for selected_topic and neutral_selection in the array.
-			obj.selected_topic_index = await obtain_selected_topic_index();
+			// obj.selected_topic_index = [];
+			// for (var i=0; i<obj.file_array_rand.length; i++) {
+				
+				// Split on the underscore
+			// 	const char_array = await obj.file_array_rand.at(i).split('_');
+			// 	console.log("char_array: ", char_array);
+			// 	console.log("selected_topic: ", obj.selected_topic);
+				
+			// 	const bool = await Boolean(char_array.map((val, ind) => { return val == obj.selected_topic ? true : ''; }).filter((x) => x.length != 0).at(0));
+			// 	console.log("bool: ", bool);
+		    
+			// 	if (bool == true) { obj.selected_topic_index.push(obj.file_array_rand.at(i)); }
+			// }
+			
+			// OR
+			
+			obj.selected_topic_index = obj.file_array_rand.map((val, ind) => {
+				return obj.file_array_rand.at(i).split('_').at(0) == obj.selected_topic ? ind : ''; 
+			}).filter((x) => x.length != 0);
+
+			// RESULT: incorrect, it should give the index
+			// selected_topic_index: Array(3) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png" ]
 			
 			console.log("here1 obj: ", obj);
 			return obj;
@@ -850,8 +873,7 @@ async function database_only() {
 					} else {
 						return '';
 					}
-				});
-				obj.neutralORnot_selection_index = await obj.neutralORnot_selection_index.filter((x) => x.length != 0);
+				}).filter((x) => x.length != 0);
 			} else {
 				obj.neutralORnot_selection_index = obj.file_array_rand.map((text_str, ind) => { 
 					if ((/neutral/g).test(text_str) == false) {
@@ -859,9 +881,11 @@ async function database_only() {
 					} else {
 						return '';
 					}
-				});
-				obj.neutralORnot_selection_index = await obj.neutralORnot_selection_index.filter((x) => x.length != 0);
+				}).filter((x) => x.length != 0);
 			}
+
+			// RESULT: correct
+			// neutralORnot_selection_index: Array(7) [ 2, 4, 8, … ]
 			
 			console.log("here2 obj: ", obj);
 			return obj;
@@ -877,6 +901,11 @@ async function database_only() {
 					}
 				}
 			}
+
+			// OR
+
+			obj.intersection_result1 = obj.selected_topic_index.filter(val => obj.neutralORnot_selection_index.includes(val));
+			
 			console.log("here3 obj: ", obj);
 			return obj;
 		})
@@ -903,7 +932,7 @@ async function database_only() {
 			// document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
 			
 			// Display output
-			imageData = await display_all('', image_url, 'image', 'without_text');
+			await display_all('', image_url, 'image', 'without_text');
 		})
 	
 	
