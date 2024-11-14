@@ -326,7 +326,6 @@ async function run_selection() {
 		// The model gives too many phrases: so obtain only one of the phrases
 		var final_selection = Math.floor(Math.random() * motivational_sentences.length);
 		generated_text = motivational_sentences.at(final_selection);
-		// console.log("generated_text: ", generated_text);
 
 		// ------------------------------
 		
@@ -679,7 +678,7 @@ async function create_text_call_API_Gemini(text_prompt) {
         // Print text part of JSON response only with user message
         var generated_text = await fetch(url, options)
             .then(res => res.json())
-            .then(res => { console.log("res: ", res); return JSON.parse(JSON.stringify(res))['candidates'][0]['content']['parts'][0]['text']; })
+            .then(res => { return JSON.parse(JSON.stringify(res))['candidates'][0]['content']['parts'][0]['text']; })
             .catch(error => { console.log("error: ", error); document.getElementById('error').innerHTML = error; });
 
 	// Replace hypens with spaces
@@ -702,7 +701,7 @@ async function preprocess_text(generated_text) {
 	
 	// Could adjust this by the length of the generated sentence
 	if (obj.width == 256) { font_height = 20; }
-	console.log("font_height: ", font_height);
+	// console.log("font_height: ", font_height);
 
 	// ------------------------------
 	
@@ -710,10 +709,10 @@ async function preprocess_text(generated_text) {
 	// Character Width = Font Size * Character Aspect Ratio = 30 * 0.5 = 15pt
 	const aspect_ratio = 0.6; // larger aspect_ratio the max_num_of_char_per_line is smaller
 	const char_width = font_height*aspect_ratio;
-	console.log("char_width: ", char_width);
+	// console.log("char_width: ", char_width);
 	
 	const max_num_of_char_per_line = await Math.floor(obj.width/char_width);
-	console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
+	// console.log("max_num_of_char_per_line: ", max_num_of_char_per_line);
 
 	// ------------------------------
 	
@@ -734,7 +733,7 @@ async function preprocess_text(generated_text) {
 		}
 	});
 	cut_text.push(word_list.join(' '));
-	console.log('cut_text: ', cut_text);
+	// console.log('cut_text: ', cut_text);
 
 	return cut_text;
 }
