@@ -144,6 +144,8 @@ const BUCKET_NAME = "memetics-motivation";
 
 var imageData;
 
+var obj = {};
+
 // ------------------------------------------
 // UI
 // ------------------------------------------  
@@ -401,41 +403,46 @@ async function create_image_call_API_OpenAI(model_name, image_size, image_prompt
 
 // ------------------------------------------
 
+async function generate_topic_and_neutralORnot() {
+	
+	// Generate one random number from [0 to array_length]
+	obj.selected_topic = obj.motivation_topics.at(Math.floor(Math.random()*obj.motivation_topics.length));
+	obj.neutral_selection = obj.neutralORnot.at(Math.floor(Math.random()*obj.neutralORnot.length));
+
+	return obj;
+}
+
+// ------------------------------------------
+
 async function select_topic() {
 
-	// Generate one random number from [0 to array_length]
-	const selected_topic = motivation_topics.at(Math.floor(Math.random()*motivation_topics.length));
-	console.log("selected_topic: ", selected_topic);
-	
-	const neutral_selection = neutralORnot.at(Math.floor(Math.random()*neutralORnot.length));
-	console.log("neutral_selection: ", neutral_selection);
+	obj = await generate_topic_and_neutralORnot();
 
 	// --------------------------------------
 	
-	var cur_date_timestamp = Date.now();
+	const cur_date_timestamp = Date.now();
 	// console.log("cur_date_timestamp: ", cur_date_timestamp);
 
 	// print the date in correct format
-	var cur_date = new Date(cur_date_timestamp).toString();
+	const cur_date = new Date(cur_date_timestamp).toString();
 	// console.log("cur_date: ", cur_date);
 
 	// --------------------------------------
 		
 	if (neutral_selection == "neutral") {
-		const image_prompt = `Create a neutral image about ${selected_topic}. In addition today's date is ${cur_date}, if there is a major holiday within the next 10 days, use themes from the upcoming holiday to create the image.`;
+		const image_prompt = `Create a neutral image about ${obj.selected_topic}. In addition today's date is ${cur_date}, if there is a major holiday within the next 10 days, use themes from the upcoming holiday to create the image.`;
 	
-		const text_prompt = `Write a neutral statement about ${selected_topic}. Be creative and give varying responses, limit the response to 25 words or less.`;
+		const text_prompt = `Write a neutral statement about ${obj.selected_topic}. Be creative and give varying responses, limit the response to 25 words or less.`;
 
 		return [image_prompt, text_prompt];
 	} else {
-		const image_prompt = `Create an image about ${selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}. In addition today's date is ${cur_date}, if there is a major holiday within the next 10 days, use themes from the upcoming holiday to create the image.`;
+		const image_prompt = `Create an image about ${obj.selected_topic} such that one would be motivated to obtain more of the topic of ${selected_topic}. In addition today's date is ${cur_date}, if there is a major holiday within the next 10 days, use themes from the upcoming holiday to create the image.`;
 	
-		const text_prompt = `Write a motivational statement to encourage ${selected_topic}. Be creative and give varying responses, limit the response to 25 words or less.`;
+		const text_prompt = `Write a motivational statement to encourage ${obj.selected_topic}. Be creative and give varying responses, limit the response to 25 words or less.`;
 
-		return [image_prompt, text_prompt, selected_topic, neutral_selection];
+		return [image_prompt, text_prompt, obj.selected_topic, obj.neutral_selection];
 	}
 
-	// --------------------------------------
 }
 
 // ------------------------------------------
@@ -815,58 +822,51 @@ async function obtain_selected_topic_index(selected_topic, file_array_rand) {
 
 async function database_only() {
 
-	width = 512;
-	height = 512;
+	obj.width = 512;
+	obj.height = 512;
 
-
-	await select_topic()
-		.then(async function(data) { 
-
-			var obj = {};
-			
-			// Get randomly selected image and text prompts
-			const [image_prompt, text_prompt, obj.selected_topic, obj.neutral_selection] = data;
+	await generate_topic_and_neutralORnot()
+		.then(async function(obj) { 
 			
 			// Fetch a list of the contents of the GCP Storage Bucket
-			var file_array = await List_bucket_contents();
+			const file_array = await List_bucket_contents();
 
 			// Shuffle file_array directly.
 			obj.file_array_rand = await file_array.sort(() => Math.random() - 0.5);
 
-			console.log("obj: ", obj);
+			console.log("here0 obj: ", obj);
 			return obj;
 		})
 		.then(async function(obj) { 
 			// Find the index values for selected_topic and neutral_selection in the array.
 			obj.selected_topic_index = await obtain_selected_topic_index(selected_topic, file_array_rand);
 			
-			console.log("obj: ", obj);
+			console.log("here1 obj: ", obj);
 			return obj;
 		})
 		.then(async function(obj) { 
-
-			var neutralORnot_selection_index;
+	
 			if (obj.neutral_selection == "neutral") { 
-				var neutralORnot_selection_index = obj.file_array_rand.map((text_str, ind) => { 
+				obj.neutralORnot_selection_index = obj.file_array_rand.map((text_str, ind) => { 
 					if ((/neutral/g).test(text_str) == true) {
 						return ind;
 					} else {
 						return '';
 					}
 				});
-				obj.neutralORnot_selection_index = await neutralORnot_selection_index.filter((x) => x.length != 0);
+				obj.neutralORnot_selection_index = await obj.neutralORnot_selection_index.filter((x) => x.length != 0);
 			} else {
-				var neutralORnot_selection_index = obj.file_array_rand.map((text_str, ind) => { 
+				obj.neutralORnot_selection_index = obj.file_array_rand.map((text_str, ind) => { 
 					if ((/neutral/g).test(text_str) == false) {
 						return ind;
 					} else {
 						return '';
 					}
 				});
-				obj.neutralORnot_selection_index = await neutralORnot_selection_index.filter((x) => x.length != 0);
+				obj.neutralORnot_selection_index = await obj.neutralORnot_selection_index.filter((x) => x.length != 0);
 			}
 			
-			console.log("obj: ", obj);
+			console.log("here2 obj: ", obj);
 			return obj;
 		})
 		.then(async function(obj) { 
@@ -880,7 +880,7 @@ async function database_only() {
 					}
 				}
 			}
-			console.log("obj: ", obj);
+			console.log("here3 obj: ", obj);
 			return obj;
 		})
 		.then(async function(obj) { 
@@ -888,14 +888,14 @@ async function database_only() {
 			// Select a valid index value
 			obj.file_selection = await obj.intersection_result.at(Math.floor(Math.random()*obj.intersection_result.length));
 
-			console.log("obj: ", obj);
+			console.log("here4 obj: ", obj);
 			return obj;
 		})
 		.then(async function(obj) {
 			
 			obj.selected_image = await obj.file_array_rand.at(obj.file_selection);
 
-			console.log("obj: ", obj);
+			console.log("here5 obj: ", obj);
 			return obj;
 		})
 		.then(async function(obj) { 
@@ -903,7 +903,7 @@ async function database_only() {
 			// Fetch the image from GCP Storage Bucket
 			const image_url = `https://storage.googleapis.com/memetics-motivation/${obj.selected_image}`;
 		
-			document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
+			// document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
 			
 			// Display output
 			imageData = await display_all('', image_url, 'image', 'without_text');
