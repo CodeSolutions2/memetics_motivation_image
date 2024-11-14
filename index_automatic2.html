@@ -345,7 +345,7 @@ async function run_selection() {
     
 	} else if (dropdown_option_type == 'free_image_from_database') {
 
-		await database_only();
+		await database_retrieval();
 		
 	} else {
 		document.getElementById('notification').innerHTML = "No model and image size was selected. Select a model and image size.";
@@ -778,14 +778,10 @@ async function fetch_on_cloud_storage_return_contents_list(url) {
 
 // -------------------------------------------------
 
-async function database_only() {
+async function database_retrieval() {
 
 	await generate_topic_and_neutralORnot()
 		.then(async function(obj) { 
-
-			// OUTPUTS:
-			// neutral_selection: "neutral"
-			// selected_topic: "education"
 			
 			// Fetch a list of the contents of the GCP Storage Bucket
 			const file_array = await List_bucket_contents();
@@ -793,61 +789,23 @@ async function database_only() {
 			// Shuffle file_array directly.
 			obj.file_array_rand = await file_array.sort(() => Math.random() - 0.5);
 
-			console.log("here0 obj: ", obj);
-
-			// Items that it should have at this point
-			// BUCKET_NAME: "memetics-motivation"
-			// file_array_rand: Array(24) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png", … ]
-			// height: 512
-			// neutral_selection: "neutral"
-			// selected_topic: "education"
-			// width: 512
+			// console.log("here0 obj: ", obj);
 			
-			
-			// Items that it has, but should not have because they are executed in the future
-			// file_selection: undefined
-			// intersection_result: Array []
-			// neutralORnot_selection_index: Array(7) [ 2, 4, 8, … ]
-			// selected_image: "education_512x512_0.png"
-			// selected_topic_index: Array(3) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png" ]
+			document.getElementById("progress_bar").value = (2/6)*100;
 			
 			return obj;
 		})
-		.then(async function(obj) { 
-
-			// OUTPUTS THAT IT SHOULD HAVE:
-			// BUCKET_NAME: "memetics-motivation"
-			// file_array_rand: Array(24) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png", … ]
-			// height: 512
-			// neutral_selection: "neutral"
-			// selected_topic: "education"
-			// width: 512
+		.then(async function(obj) {
 			
 			// Find the index values for selected_topic and neutral_selection in the array.
-			// obj.selected_topic_index = [];
-			// for (var i=0; i<obj.file_array_rand.length; i++) {
-				
-				// Split on the underscore
-			// 	const char_array = await obj.file_array_rand.at(i).split('_');
-			// 	console.log("char_array: ", char_array);
-			// 	console.log("selected_topic: ", obj.selected_topic);
-				
-			// 	const bool = await Boolean(char_array.map((val, ind) => { return val == obj.selected_topic ? true : ''; }).filter((x) => x.length != 0).at(0));
-			// 	console.log("bool: ", bool);
-		    
-			// 	if (bool == true) { obj.selected_topic_index.push(obj.file_array_rand.at(i)); }
-			// }
-			
-			// OR
-			
 			obj.selected_topic_index = obj.file_array_rand.map((val, ind) => {
 				return obj.file_array_rand.at(ind).split('_').at(0) == obj.selected_topic ? ind : ''; 
 			}).filter((x) => x.length != 0);
-
-			// RESULT: incorrect, it should give the index
-			// selected_topic_index: Array(3) [ "education_512x512_0.png", "education_512x512_1.png", "education_neutral_512x512_0.png" ]
 			
-			console.log("here1 obj: ", obj);
+			// console.log("here1 obj: ", obj);
+
+			document.getElementById("progress_bar").value = (2.5/6)*100;
+			
 			return obj;
 		})
 		.then(async function(obj) { 
@@ -869,30 +827,22 @@ async function database_only() {
 					}
 				}).filter((x) => x.length != 0);
 			}
-
-			// RESULT: correct
-			// neutralORnot_selection_index: Array(7) [ 2, 4, 8, … ]
 			
-			console.log("here2 obj: ", obj);
+			// console.log("here2 obj: ", obj);
+
+			document.getElementById("progress_bar").value = (3/6)*100;
+			
 			return obj;
 		})
 		.then(async function(obj) { 
 
 			// Find the intersection of the arrays.
-			obj.intersection_result = [];
-			for (let i=0; i<obj.selected_topic_index.length; i++) {
-				for (let j=0; j<obj.neutralORnot_selection_index.length; j++) {
-					if (obj.selected_topic_index.at(i) == obj.neutralORnot_selection_index.at(j)) {
-						obj.intersection_result.push(obj.selected_topic_index.at(i));
-					}
-				}
-			}
-
-			// OR
-
-			obj.intersection_result1 = obj.selected_topic_index.filter(val => obj.neutralORnot_selection_index.includes(val));
+			obj.intersection_result = obj.selected_topic_index.filter(val => obj.neutralORnot_selection_index.includes(val));
 			
-			console.log("here3 obj: ", obj);
+			// console.log("here3 obj: ", obj);
+
+			document.getElementById("progress_bar").value = (3.5/6)*100;
+			
 			return obj;
 		})
 		.then(async function(obj) { 
@@ -900,14 +850,20 @@ async function database_only() {
 			// Select a valid index value
 			obj.file_selection = await obj.intersection_result.at(Math.floor(Math.random()*obj.intersection_result.length));
 
-			console.log("here4 obj: ", obj);
+			// console.log("here4 obj: ", obj);
+
+			document.getElementById("progress_bar").value = (4/6)*100;
+			
 			return obj;
 		})
 		.then(async function(obj) {
 			
 			obj.selected_image = await obj.file_array_rand.at(obj.file_selection);
 
-			console.log("here5 obj: ", obj);
+			// console.log("here5 obj: ", obj);
+
+			document.getElementById("progress_bar").value = (5/6)*100;
+			
 			return obj;
 		})
 		.then(async function(obj) { 
@@ -915,13 +871,12 @@ async function database_only() {
 			// Fetch the image from GCP Storage Bucket
 			const image_url = `https://storage.googleapis.com/${obj.BUCKET_NAME}/${obj.selected_image}`;
 		
-			// document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
+			document.getElementById('notification').innerHTML = "Please wait, the image is being retrieved."
 			
 			// Display output
 			await display_all('', image_url, 'image', 'without_text');
 		})
-	
-	
+
 }
 
 // -------------------------------------------------
